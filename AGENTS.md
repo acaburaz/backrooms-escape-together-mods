@@ -171,6 +171,19 @@ Steps for a person: `docs/unreal-editor.md`. For an agent:
 - `generator/editor_layout.py` checks an export and writes the `.editor.lua`. It refuses an export whose removed keys are not in the current layout.
 - `python scripts/test_unreal_roundtrip.py` covers all of this except the real editor.
 
+## Releases
+
+The download for players is a GitHub release with one file, `CustomBackroomsMap-<version>.zip`, made by `python scripts/package.py` (the mod folder, `INSTALL.txt`, `NOTICE.md`, `LICENSE`). The README links to `releases/latest`. To publish a version, only when the owner asks for it:
+
+```bash
+python scripts/offline_check.py && node scripts/verify-no-secret.mjs
+python scripts/package.py
+git push origin main
+gh release create "v$(cat VERSION)" "dist/CustomBackroomsMap-$(cat VERSION).zip" --title "..." --notes-file <notes>
+```
+
+Bump `VERSION` first when the mod changed. Say in the notes what was and was not run in the game.
+
 ## Rules that still bind
 
 - **Never commit `.env` or any key.** `.gitignore` covers it; run `node scripts/verify-no-secret.mjs` before every push.

@@ -18,13 +18,18 @@ import install_mod  # noqa: E402
 
 HOWTO = """CustomBackroomsMap for Backrooms: Escape Together
 
-1. Install the UE4SS build made for this game (see the README of the repository) into
-   <game>\\BET\\Binaries\\Win64 so that <game>\\BET\\Binaries\\Win64\\ue4ss\\Mods exists.
+1. Install the UE4SS build made for this game (from the game's Nexus Mods page; stock UE4SS does not
+   work) into <game>\\BET\\Binaries\\Win64 so that <game>\\BET\\Binaries\\Win64\\ue4ss\\Mods exists.
+   <game> is the game's folder: in Steam, right-click the game, Manage, Browse local files.
 2. Unpack the CustomBackroomsMap folder from this zip into <game>\\BET\\Binaries\\Win64\\ue4ss\\Mods.
-3. Start the game and start or load a Level 0 journey. The elevator stops early and opens onto the map.
+3. Start the game and start or load a Level 0 journey. The elevator rides down for half a minute,
+   stops at the map and opens its doors. Walk out. F9 tries the exit door.
 
 levels\\active.txt names the level that loads. Delete it to get the older floor, Flickering Halls.
 Every player in a co-op game needs the same folder.
+
+Source, newer versions and what has been tested:
+https://github.com/acaburaz/backrooms-escape-together-mods
 
 Lore, names and descriptions of the wiki level are adapted from The Backrooms wiki
 (https://backrooms-wiki.wikidot.com/), CC BY-SA 3.0. See NOTICE.md.

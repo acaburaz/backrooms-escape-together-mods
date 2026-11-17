@@ -20,20 +20,22 @@ Nothing from the game is in this repository. The floor is built at runtime from 
 
 ## Install and play
 
+**Download:** [the latest release](https://github.com/acaburaz/backrooms-escape-together-mods/releases/latest) has `CustomBackroomsMap-<version>.zip`. It holds the mod folder and an `INSTALL.txt`; nothing else from this repository is needed to play.
+
 1. Install the UE4SS build made for this game (from the game's Nexus Mods page) into `<game>\BET\Binaries\Win64`. Stock UE4SS does not find this game's patterns.
-2. Get the mod into `<game>\BET\Binaries\Win64\ue4ss\Mods\CustomBackroomsMap`:
+2. Get the mod into `<game>\BET\Binaries\Win64\ue4ss\Mods\CustomBackroomsMap`. Either unpack the `CustomBackroomsMap` folder from the release zip into `<game>\BET\Binaries\Win64\ue4ss\Mods`, or from a clone of this repository:
 
    ```bash
    pip install lupa
    python scripts/install_mod.py
    ```
 
-   The game is found through Steam. If it is not, set `BET_GAME_DIR` (see `.env.example`). Without Python, copy `mod/CustomBackroomsMap` there yourself.
+   The game is found through Steam. If it is not, set `BET_GAME_DIR` (see `.env.example`).
 3. Start the game and start or load a Level 0 journey. There is nothing else to press: the elevator rides down for half a minute, stops at the floor and opens its doors. Walk out.
 4. Pick items up with the game's own key. They go into your real inventory; eat and drink from it as on any level.
 5. **F9** tries the exit door.
 
-Every player in a co-op game needs the same mod folder. `python scripts/package.py` makes a zip to hand over.
+Every player in a co-op game needs the same mod folder: the same release zip, or `python scripts/package.py` to make one from a clone.
 
 ### How a floor starts
 
