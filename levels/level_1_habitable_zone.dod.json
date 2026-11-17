@@ -1,0 +1,84 @@
+{
+  "level": "level_1_habitable_zone",
+  "checked": "2026-11-17T11:54:23Z",
+  "results": [
+    {
+      "id": "W1",
+      "ok": true,
+      "what": "Sources: every wiki page used is saved with its url and licence, and the map credits the wiki",
+      "detail": ""
+    },
+    {
+      "id": "W2",
+      "ok": true,
+      "what": "Facts: every fact the map rests on is a word-for-word quote from a saved page",
+      "detail": ""
+    },
+    {
+      "id": "W3",
+      "ok": true,
+      "what": "Name: the map carries the wiki's own name and number for the level",
+      "detail": ""
+    },
+    {
+      "id": "W4",
+      "ok": true,
+      "what": "Survival difficulty: the class and its lines are recorded as the page gives them",
+      "detail": ""
+    },
+    {
+      "id": "W5",
+      "ok": true,
+      "what": "Description: the rooms look and read the way the page describes the level",
+      "detail": ""
+    },
+    {
+      "id": "W6",
+      "ok": true,
+      "what": "Entities: the map's entity is one the page lists for this level, under the wiki's name",
+      "detail": ""
+    },
+    {
+      "id": "W7",
+      "ok": true,
+      "what": "Resources: what there is to eat and drink is named as the wiki names it",
+      "detail": ""
+    },
+    {
+      "id": "W8",
+      "ok": true,
+      "what": "Entrances and exits: you arrive the way the page says and the way out leads where the page says",
+      "detail": ""
+    },
+    {
+      "id": "W9",
+      "ok": true,
+      "what": "Grounding: every line the players read cites a wiki quote, a rule of the mod, or both, as its kind asks",
+      "detail": ""
+    },
+    {
+      "id": "W10",
+      "ok": true,
+      "what": "Nothing invented: no level, entity, object or name appears that the saved pages do not have",
+      "detail": ""
+    },
+    {
+      "id": "P1",
+      "ok": true,
+      "what": "Playable: a route from the elevator to the exit exists, and it needs both food and rest",
+      "detail": ""
+    },
+    {
+      "id": "P2",
+      "ok": true,
+      "what": "Honest lines: no room ids or directions, a room only mentions what is in it and what the mod builds, and nothing calls the map safe",
+      "detail": ""
+    },
+    {
+      "id": "P3",
+      "ok": true,
+      "what": "Mod contract: halls.lua reads exactly the lines listed in generator/text_keys.json",
+      "detail": ""
+    }
+  ]
+}

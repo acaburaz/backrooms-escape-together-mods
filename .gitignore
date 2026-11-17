@@ -1,0 +1,22 @@
+# Secrets and machine settings. Copy .env.example to .env and fill it in; .env is never committed.
+.env
+.env.*
+!.env.example
+
+# Built or downloaded, not source
+dist/
+export/
+vendor/
+node_modules/
+__pycache__/
+*.pyc
+
+# Scratch: probes, one-off patch scripts, raw screenshots, local task state
+dev/
+shots/
+.unlazy/
+GATES.md
+levels/openai-preview.*
+
+# scratch written by scripts/verify-level.mjs
+levels/.verify-level.*

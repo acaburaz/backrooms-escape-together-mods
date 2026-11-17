@@ -1,0 +1,1421 @@
+{
+  "id": "level_1_habitable_zone",
+  "title": "Habitable Zone",
+  "pickerLabel": "WIKI LEVEL 1: Habitable Zone",
+  "briefing": "The elevator from Level 0 stops early in the Habitable Zone. Wide concrete halls shift between warehouse and parking structure. Find the VHS Tape, Green Valve, and Glass Fuse, then try the UTILITY door. When Flickering starts, reach a bed before the Skin-Stealer gets you.",
+  "flavorSource": "wiki+openai",
+  "cellSize": 800,
+  "origin": {
+    "x": 120000,
+    "y": 120000,
+    "z": 400
+  },
+  "rules": {
+    "hungerStart": 100,
+    "staminaStart": 100,
+    "moveHunger": 15,
+    "moveStamina": 15,
+    "refuge": true,
+    "creeper": "crate",
+    "exitPipes": true
+  },
+  "coop": {
+    "sharedVitals": true,
+    "minPlayers": 1,
+    "maxPlayers": 6,
+    "rules": "Three parts lie on small tables in the rooms: a tape, a valve and a fuse. The exit door opens when the group carries all three and somebody tries the door."
+  },
+  "start": "r0_0",
+  "exit": {
+    "room": "r3_3",
+    "requires": [
+      "vhs",
+      "valve",
+      "fuse"
+    ]
+  },
+  "rooms": [
+    {
+      "id": "r0_0",
+      "x": 0,
+      "y": 0,
+      "theme": "grey_halls",
+      "description": "You stand in bland grey concrete. A square pillar cuts one corner, and debris lies in small dry piles."
+    },
+    {
+      "id": "r1_0",
+      "x": 1,
+      "y": 0,
+      "theme": "grey_halls",
+      "description": "A Granola Square sits on a small table. Bland walls press close around a square pillar and scattered debris."
+    },
+    {
+      "id": "r2_0",
+      "x": 2,
+      "y": 0,
+      "theme": "grey_halls",
+      "description": "A Quiet Cot rests on the floor. The grey walls are stained, and debris gathers beside one concrete pillar."
+    },
+    {
+      "id": "r3_0",
+      "x": 3,
+      "y": 0,
+      "theme": "warehouse_pipes",
+      "description": "A VHS Tape sits on a small table. Pipes run under the ceiling above a metal shelf stacked with crates."
+    },
+    {
+      "id": "r0_1",
+      "x": 0,
+      "y": 1,
+      "theme": "warehouse_pipes",
+      "description": "A metal shelf of crates leans in one corner. Pipes cross the ceiling and carry a dull clang."
+    },
+    {
+      "id": "r1_1",
+      "x": 1,
+      "y": 1,
+      "theme": "stagnant_crates",
+      "description": "A Buzzing Mattress lies on the floor. Wooden crates sit near a stagnant puddle that smells unclean."
+    },
+    {
+      "id": "r2_1",
+      "x": 2,
+      "y": 1,
+      "theme": "warehouse_pipes",
+      "description": "A Canned Soup sits on a small table. A metal shelf holds crates below two ceiling pipes."
+    },
+    {
+      "id": "r3_1",
+      "x": 3,
+      "y": 1,
+      "theme": "gild_sector",
+      "description": "A Glass Fuse sits on a small table. Warmer concrete surrounds a square pillar and stacked crates."
+    },
+    {
+      "id": "r0_2",
+      "x": 0,
+      "y": 2,
+      "theme": "stagnant_crates",
+      "description": "Wooden crates crowd one corner. A dark puddle spreads a plastic stagnant smell."
+    },
+    {
+      "id": "r1_2",
+      "x": 1,
+      "y": 2,
+      "theme": "stagnant_crates",
+      "description": "Almond Water stands on a small table. Crates sit by a stale puddle on the concrete."
+    },
+    {
+      "id": "r2_2",
+      "x": 2,
+      "y": 2,
+      "theme": "gild_sector",
+      "description": "A Small Key sits on a small table. Varied concrete bands frame a square pillar and a stack of crates."
+    },
+    {
+      "id": "r3_2",
+      "x": 3,
+      "y": 2,
+      "theme": "garden_floor",
+      "description": "Flat green growth crawls over the floor and the foot of the walls. Debris breaks through it in small piles."
+    },
+    {
+      "id": "r0_3",
+      "x": 0,
+      "y": 3,
+      "theme": "garden_floor",
+      "description": "You feel humid air above flat green growth. The floor is broken by wood, packing material, and metal."
+    },
+    {
+      "id": "r1_3",
+      "x": 1,
+      "y": 3,
+      "theme": "warehouse_pipes",
+      "description": "Pipes run over a metal shelf stocked with wooden crates. The air feels stuffy and humid."
+    },
+    {
+      "id": "r2_3",
+      "x": 2,
+      "y": 3,
+      "theme": "gild_sector",
+      "description": "A Green Valve sits on a small table. Color bands cross the concrete beside a square pillar and crates."
+    },
+    {
+      "id": "r3_3",
+      "x": 3,
+      "y": 3,
+      "theme": "gild_sector",
+      "description": "A heavy UTILITY door faces you. Warm concrete, a square pillar, and stacked crates fill the room."
+    }
+  ],
+  "links": [
+    {
+      "a": "r0_0",
+      "b": "r1_0",
+      "lock": null
+    },
+    {
+      "a": "r0_0",
+      "b": "r0_1",
+      "lock": null
+    },
+    {
+      "a": "r1_0",
+      "b": "r2_0",
+      "lock": null
+    },
+    {
+      "a": "r1_0",
+      "b": "r1_1",
+      "lock": null
+    },
+    {
+      "a": "r2_0",
+      "b": "r3_0",
+      "lock": null
+    },
+    {
+      "a": "r2_0",
+      "b": "r2_1",
+      "lock": null
+    },
+    {
+      "a": "r3_0",
+      "b": "r3_1",
+      "lock": null
+    },
+    {
+      "a": "r0_1",
+      "b": "r1_1",
+      "lock": null
+    },
+    {
+      "a": "r0_1",
+      "b": "r0_2",
+      "lock": null
+    },
+    {
+      "a": "r1_1",
+      "b": "r2_1",
+      "lock": null
+    },
+    {
+      "a": "r1_1",
+      "b": "r1_2",
+      "lock": null
+    },
+    {
+      "a": "r2_1",
+      "b": "r3_1",
+      "lock": null
+    },
+    {
+      "a": "r2_1",
+      "b": "r2_2",
+      "lock": null
+    },
+    {
+      "a": "r3_1",
+      "b": "r3_2",
+      "lock": null
+    },
+    {
+      "a": "r0_2",
+      "b": "r1_2",
+      "lock": null
+    },
+    {
+      "a": "r0_2",
+      "b": "r0_3",
+      "lock": null
+    },
+    {
+      "a": "r1_2",
+      "b": "r2_2",
+      "lock": null
+    },
+    {
+      "a": "r1_2",
+      "b": "r1_3",
+      "lock": null
+    },
+    {
+      "a": "r2_2",
+      "b": "r3_2",
+      "lock": null
+    },
+    {
+      "a": "r2_2",
+      "b": "r2_3",
+      "lock": null
+    },
+    {
+      "a": "r3_2",
+      "b": "r3_3",
+      "lock": "small_key"
+    },
+    {
+      "a": "r0_3",
+      "b": "r1_3",
+      "lock": null
+    },
+    {
+      "a": "r1_3",
+      "b": "r2_3",
+      "lock": null
+    },
+    {
+      "a": "r2_3",
+      "b": "r3_3",
+      "lock": "small_key"
+    }
+  ],
+  "contents": {
+    "r0_0": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": []
+    },
+    "r1_0": {
+      "keys": [],
+      "puzzle": [],
+      "food": [
+        {
+          "id": "granola",
+          "name": "Granola Square",
+          "hunger": 40
+        }
+      ],
+      "rest": []
+    },
+    "r2_0": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": [
+        {
+          "id": "quiet_cot",
+          "name": "Quiet Cot",
+          "stamina": 50,
+          "callsMonster": false
+        }
+      ]
+    },
+    "r3_0": {
+      "keys": [],
+      "puzzle": [
+        {
+          "id": "vhs",
+          "name": "VHS Tape",
+          "clue": "You take the VHS Tape. It joins the door parts."
+        }
+      ],
+      "food": [],
+      "rest": []
+    },
+    "r0_1": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": []
+    },
+    "r1_1": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": [
+        {
+          "id": "buzzing_mattress",
+          "name": "Buzzing Mattress",
+          "stamina": 50,
+          "callsMonster": true
+        }
+      ]
+    },
+    "r2_1": {
+      "keys": [],
+      "puzzle": [],
+      "food": [
+        {
+          "id": "canned_soup",
+          "name": "Canned Soup",
+          "hunger": 40
+        }
+      ],
+      "rest": []
+    },
+    "r3_1": {
+      "keys": [],
+      "puzzle": [
+        {
+          "id": "fuse",
+          "name": "Glass Fuse",
+          "clue": "You take the Glass Fuse. It joins the door parts."
+        }
+      ],
+      "food": [],
+      "rest": []
+    },
+    "r0_2": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": []
+    },
+    "r1_2": {
+      "keys": [],
+      "puzzle": [],
+      "food": [
+        {
+          "id": "almond_water",
+          "name": "Almond Water",
+          "hunger": 40
+        }
+      ],
+      "rest": []
+    },
+    "r2_2": {
+      "keys": [
+        {
+          "id": "small_key",
+          "name": "Small Key"
+        }
+      ],
+      "puzzle": [],
+      "food": [],
+      "rest": []
+    },
+    "r3_2": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": []
+    },
+    "r0_3": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": []
+    },
+    "r1_3": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": []
+    },
+    "r2_3": {
+      "keys": [],
+      "puzzle": [
+        {
+          "id": "valve",
+          "name": "Green Valve",
+          "clue": "You take the Green Valve. It joins the door parts."
+        }
+      ],
+      "food": [],
+      "rest": []
+    },
+    "r3_3": {
+      "keys": [],
+      "puzzle": [],
+      "food": [],
+      "rest": []
+    }
+  },
+  "monsters": [
+    {
+      "id": "entity",
+      "name": "Skin-Stealer",
+      "patrol": [
+        "r2_0",
+        "r3_0",
+        "r3_1"
+      ],
+      "damage": 20,
+      "visualClass": "/Game/Entities/SkinStealer/BP_SkinStealer.BP_SkinStealer_C"
+    }
+  ],
+  "solution": {
+    "steps": [
+      {
+        "action": "move",
+        "to": "r1_0"
+      },
+      {
+        "action": "move",
+        "to": "r2_0"
+      },
+      {
+        "action": "rest",
+        "id": "quiet_cot"
+      },
+      {
+        "action": "move",
+        "to": "r3_0"
+      },
+      {
+        "action": "take",
+        "id": "vhs"
+      },
+      {
+        "action": "move",
+        "to": "r3_1"
+      },
+      {
+        "action": "take",
+        "id": "fuse"
+      },
+      {
+        "action": "move",
+        "to": "r2_1"
+      },
+      {
+        "action": "eat",
+        "id": "canned_soup"
+      },
+      {
+        "action": "move",
+        "to": "r2_2"
+      },
+      {
+        "action": "take",
+        "id": "small_key"
+      },
+      {
+        "action": "move",
+        "to": "r2_3"
+      },
+      {
+        "action": "take",
+        "id": "valve"
+      },
+      {
+        "action": "move",
+        "to": "r3_3"
+      },
+      {
+        "action": "exit"
+      }
+    ]
+  },
+  "seed": 1360,
+  "themes": {
+    "grey_halls": {
+      "wall": [
+        0.31,
+        0.31,
+        0.3
+      ],
+      "band": [
+        0.24,
+        0.24,
+        0.23
+      ],
+      "floor": [
+        0.29,
+        0.29,
+        0.28
+      ],
+      "ceil": [
+        0.27,
+        0.27,
+        0.26
+      ],
+      "trim": [
+        0.18,
+        0.18,
+        0.17
+      ],
+      "light": [
+        1.0,
+        0.92,
+        0.82
+      ],
+      "power": 0.72,
+      "props": [
+        "pillar",
+        "debris"
+      ]
+    },
+    "warehouse_pipes": {
+      "wall": [
+        0.28,
+        0.28,
+        0.27
+      ],
+      "band": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "floor": [
+        0.25,
+        0.25,
+        0.24
+      ],
+      "ceil": [
+        0.22,
+        0.22,
+        0.22
+      ],
+      "trim": [
+        0.16,
+        0.16,
+        0.16
+      ],
+      "light": [
+        0.95,
+        0.9,
+        0.78
+      ],
+      "power": 0.65,
+      "props": [
+        "shelf",
+        "pipes"
+      ]
+    },
+    "stagnant_crates": {
+      "wall": [
+        0.27,
+        0.28,
+        0.27
+      ],
+      "band": [
+        0.17,
+        0.18,
+        0.17
+      ],
+      "floor": [
+        0.21,
+        0.22,
+        0.21
+      ],
+      "ceil": [
+        0.23,
+        0.23,
+        0.22
+      ],
+      "trim": [
+        0.14,
+        0.14,
+        0.13
+      ],
+      "light": [
+        0.9,
+        0.86,
+        0.75
+      ],
+      "power": 0.58,
+      "props": [
+        "crates",
+        "puddle"
+      ]
+    },
+    "gild_sector": {
+      "wall": [
+        0.36,
+        0.33,
+        0.27
+      ],
+      "band": [
+        0.31,
+        0.25,
+        0.18
+      ],
+      "floor": [
+        0.3,
+        0.29,
+        0.26
+      ],
+      "ceil": [
+        0.28,
+        0.27,
+        0.24
+      ],
+      "trim": [
+        0.24,
+        0.2,
+        0.15
+      ],
+      "light": [
+        1.0,
+        0.94,
+        0.78
+      ],
+      "power": 0.92,
+      "props": [
+        "pillar",
+        "crates"
+      ]
+    },
+    "garden_floor": {
+      "wall": [
+        0.25,
+        0.31,
+        0.25
+      ],
+      "band": [
+        0.16,
+        0.27,
+        0.16
+      ],
+      "floor": [
+        0.18,
+        0.25,
+        0.18
+      ],
+      "ceil": [
+        0.22,
+        0.24,
+        0.21
+      ],
+      "trim": [
+        0.13,
+        0.18,
+        0.13
+      ],
+      "light": [
+        0.86,
+        0.94,
+        0.78
+      ],
+      "power": 0.62,
+      "props": [
+        "growth",
+        "debris"
+      ]
+    }
+  },
+  "text": {
+    "intro1": "The elevator from Level 0 stops early and opens into this place.",
+    "intro2": "You see wide bland halls and feel damp air in stained concrete.",
+    "goal": "Find the VHS Tape, Green Valve, and Glass Fuse. Try the UTILITY door.",
+    "huntWarn": "When Flickering starts, reach a cot or mattress before it finds you.",
+    "huntStart": "Flickering takes the room. The Skin-Stealer starts hunting.",
+    "huntTaken": "The part leaves the table. Flickering starts, and the Skin-Stealer comes.",
+    "huntEnd": "The Flickering ends. The halls only hum and drip.",
+    "hudHunt": "FLICKERING",
+    "refuge": "You crowd by the bed here. The Flickering passes over this room.",
+    "monsterNear": "{name} watches near you with sunken white eyes.",
+    "tipDeath": "Flickering wakes hunters. Stay together near a bed.",
+    "wake": "You wake by the elevator with hunger and stamina half filled.",
+    "collapse": "Your body gives out.",
+    "hungry": "Food is scarce. Eat or drink before you fall.",
+    "tired": "Stuffy air drags at you. Find a bed and rest.",
+    "eat": "You take in {item}. Down here, resources decide how long you last.",
+    "keyTaken": "You take the {item}. Locked doors may answer it.",
+    "restQuiet": "The Quiet Cot takes your weight. The halls stay distant.",
+    "restLoud": "The Buzzing Mattress groans. Something comes one room closer.",
+    "doorShut": "The UTILITY door stays shut. Missing: {parts}.",
+    "doorOpen": "The parts fit. The way to the Utility Halls opens.",
+    "exitSign": "UTILITY",
+    "objectiveParts": "Find the tape, valve, and fuse.",
+    "objectiveKey": "Find the Small Key.",
+    "objectiveExit": "Enter the UTILITY hall.",
+    "tipParts": "Parts rest on small tables in rooms.",
+    "tipHall": "Walk the hall. Do not look back.",
+    "sealed": "You turn and find only bland wall.",
+    "chair": "The wooden crate has crept closer while you were not looking.",
+    "keyTurns": "The Small Key turns without your hand.",
+    "noDoor": "The dead end remains. The EXIT sign is gone.",
+    "hallSign": "DO NOT LOOK BACK",
+    "hallEnter": "Do not look back in this hall.",
+    "hallLook": "You look back. The hall resets.",
+    "hallLooked": "You turn back. The distance is gone.",
+    "hallPace": "A clang follows your pace in the pipes.",
+    "hallSigns": "The EXIT signs count down overhead. Keep walking. Do not look back.",
+    "hallLight": "The pipes and dials thin around a far pale opening.",
+    "epiBig": "A SMALL ROOM",
+    "epi1": "The Utility Halls feel close behind a closed sliding door.",
+    "epi2": "The plain sign waits to name the common way out.",
+    "epiSign": "LEVEL 2",
+    "epiEnd": "AGAIN",
+    "epi3": "You step through, and the Habitable Zone begins again.",
+    "loop": "LOOP {n}. The elevator opens onto the same Habitable Zone.",
+    "whispers": [
+      "You count distance, but the room refuses the number.",
+      "A crate waits only while you keep it in sight.",
+      "Clangs travel through pipes above your breathing.",
+      "The damp air smells of old, stagnant water."
+    ]
+  },
+  "wiki": {
+    "site": "https://backrooms-wiki.wikidot.com/",
+    "level": "level-1",
+    "entity": "entity-10",
+    "objects": {
+      "almond_water": "object-1"
+    },
+    "pages": {
+      "level-1": {
+        "url": "https://backrooms-wiki.wikidot.com/level-1",
+        "title": "Level 1 - \"Habitable Zone\"",
+        "fetched": "2026-11-17T11:33:06Z"
+      },
+      "entity-10": {
+        "url": "https://backrooms-wiki.wikidot.com/entity-10",
+        "title": "Entity 10 - \"Skin-Stealer\"",
+        "fetched": "2026-11-17T11:33:07Z"
+      },
+      "object-1": {
+        "url": "https://backrooms-wiki.wikidot.com/object-1",
+        "title": "Object 1 - \"Almond Water\"",
+        "fetched": "2026-11-17T11:33:09Z"
+      }
+    },
+    "licence": "CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)",
+    "credit": "Lore, names and descriptions are adapted from The Backrooms wiki (https://backrooms-wiki.wikidot.com/), pages: https://backrooms-wiki.wikidot.com/level-1, https://backrooms-wiki.wikidot.com/entity-10, https://backrooms-wiki.wikidot.com/object-1. Licensed CC BY-SA 3.0.",
+    "difficulty": {
+      "class": "1",
+      "lines": [
+        "Safe and Secure.",
+        "Presence of Anomalous Resources."
+      ]
+    },
+    "exitTo": "Level 2",
+    "model": "gpt-5.5",
+    "generated": "2026-11-17T11:54:23Z",
+    "mechanics": {
+      "M1": "The players arrive in the elevator of Level 0. It stops early and its doors open onto this level.",
+      "M2": "The level is sixteen rooms joined by open doorways. One room is behind locked doors that open for whoever carries the small key.",
+      "M3": "Hunger and stamina are shared by the group. Entering a room costs some of both, less on a second visit. Eating or drinking gives hunger back. Resting on a bed gives stamina back. At zero the group passes out and wakes in the first room with a little over half of both.",
+      "M4": "Three parts lie on small tables in the rooms: a tape, a valve and a fuse. The exit door opens when the group carries all three and somebody tries the door.",
+      "M5": "Every two to three minutes, and each time a part is taken, the lights go out for a while. While they are out the entity comes for the nearest player. Its grab kills and the level starts again.",
+      "M6": "A room with a bed is a refuge. A green lamp beside its doorway stays lit when the lights go out. While every player is inside a refuge during lights-out, the entity is no longer drawn toward them.",
+      "M7": "Behind the exit door is a long hall. Looking back there undoes the distance walked. Pipes run along it and dials sit on its walls, more of them the further in. After walking far enough without looking back, light shows at the end.",
+      "M8": "At the end of the hall is a small room with one sliding door and a sign over it. When the door opens and the players walk through, the same level starts again as the next loop.",
+      "M9": "There are two beds. One is quiet. The other is noisy and resting on it draws the entity one room closer.",
+      "M10": "With the lights on the entity only wanders and watches. It does not attack.",
+      "M11": "Green EXIT signs hang over some doorways. They cannot be trusted. One doorway leads into a dead end and is gone afterwards.",
+      "M12": "A wooden crate stands in one room and creeps closer while nobody looks at it.",
+      "M13": "F9 uses what is in front of the player: rest on a bed, try the exit door. Items are picked up with the game's own key and eaten from the inventory.",
+      "M14": "This map is not safe. Whatever the wiki's difficulty class says, the entity kills here.",
+      "M15": "A room is a square box with flat walls, a flat floor and ceiling, one ceiling lamp and open doorways. What else stands in it is its theme's props, small tables with items, and a bed if it has one."
+    },
+    "facts": [
+      {
+        "id": "F01",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "Level 1 has wide halls with bland, discolored walls and occasional concrete pillars.",
+        "quote": "Right now, you are standing in the halls. They're wide and open areas with a consistent architecture of bland, discolored walls that stretch over for miles, with the occasional concrete pillars maintaining the structure's integrity."
+      },
+      {
+        "id": "F02",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "Wanderers describe Level 1 as like an underground parking lot crossed with an abandoned warehouse.",
+        "quote": "Many wanderers describe this place as \"an endless chimera between an underground parking lot and an abandoned warehouse\", a description that might spark some familiarity for you."
+      },
+      {
+        "id": "F03",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "The Aquila Sector has grey walls and flooring with huge concrete pillars.",
+        "quote": "Grey walls and flooring with huge concrete pillars compose the Aquila Sector, the most well-known part of the Habitable Zone."
+      },
+      {
+        "id": "F04",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "The Gild Sector has more lights and more diverse architecture than other parts of Level 1.",
+        "quote": "More colorful than the Aquila Sector, the Gild Sector features more lights and a more diverse architecture than other parts of Level 1."
+      },
+      {
+        "id": "F06",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "The Garden Sector has verdant colors and blooming life.",
+        "quote": "Do not be fooled by the verdant colors and blooming life! Out of the many parts of the Habitable Zone, the Garden Sector is one of the few that doesn't suit human life."
+      },
+      {
+        "id": "F07",
+        "page": "level-1",
+        "topic": "sense",
+        "claim": "Level 1 can have clangs echoing through ceiling pipes.",
+        "quote": "Random clangs echoed through the pipes on the ceiling, though it was far less obnoxious than the incessant hum-buzz of the yellow rooms."
+      },
+      {
+        "id": "F08",
+        "page": "level-1",
+        "topic": "sense",
+        "claim": "Level 1 puddles can smell unclean and stagnant.",
+        "quote": "The puddles around me smelled unclean, the plastic scent of stagnation clinging to the air."
+      },
+      {
+        "id": "F09",
+        "page": "level-1",
+        "topic": "sense",
+        "claim": "Level 1 air can feel stuffy and humid.",
+        "quote": "The air felt stuffy and humid; if only I could crack a window and get any modicum of fresh air."
+      },
+      {
+        "id": "F10",
+        "page": "level-1",
+        "topic": "phenomenon",
+        "claim": "Level 1 halls have crates and frequent light flickering.",
+        "quote": "The halls of the Habitable Zone host two specific phenomena. The apparition of crates, being the only way to get resources, and the frequent flickering of the lights, creating small blackouts where the anomalous wildlife of the level tends to come out."
+      },
+      {
+        "id": "F11",
+        "page": "level-1",
+        "topic": "phenomenon",
+        "claim": "Level 1 has non-Euclidean geometry that fabricates perceived distances.",
+        "quote": "The Habitable Zone is subject to what we call \"non-Euclidean geometry\". This means that distances you perceive are fabricated by your senses, and that your surroundings aren't what you think they look like."
+      },
+      {
+        "id": "F12",
+        "page": "level-1",
+        "topic": "phenomenon",
+        "claim": "Level 1 sectors are similar yet distinct zones.",
+        "quote": "Those shifts in the landscape are tied to a partition of the level into similar yet distinct zones wanderers call \"sectors\"."
+      },
+      {
+        "id": "F13",
+        "page": "level-1",
+        "topic": "phenomenon",
+        "claim": "Objects like paintings and crates in Level 1 can disappear when not looked at.",
+        "quote": "Note the presence of a painting oddly placed on the floor, right before the doors leading to the halls. Like crates, they have a tendency to disappear when not looked at."
+      },
+      {
+        "id": "F14",
+        "page": "level-1",
+        "topic": "phenomenon",
+        "claim": "Flickering makes all natural lights in Level 1 switch off.",
+        "quote": "As its rather upfront name indicates, Flickering refers to random times when all the natural lights of the Habitable Zone switch off, engulfing the level in complete darkness."
+      },
+      {
+        "id": "F15",
+        "page": "level-1",
+        "topic": "phenomenon",
+        "claim": "The start and duration of a Flickering event cannot be predicted.",
+        "quote": "Both the start and duration of a Flickering event cannot be predicted."
+      },
+      {
+        "id": "F16",
+        "page": "level-1",
+        "topic": "resource",
+        "claim": "Level 1 crates hold resources needed for survival.",
+        "quote": "Those boxes are called \"crates\" by wanderers and group members alike. While they look rather unassuming, they hold your only hope at survival: resources."
+      },
+      {
+        "id": "F17",
+        "page": "level-1",
+        "topic": "entity",
+        "claim": "Level 1 entities tend to hunt during Flickering events.",
+        "quote": "As said previously, entities tend to hunt during Flickering events, but this doesn't mean you won't find any when the lights are on."
+      },
+      {
+        "id": "F18",
+        "page": "entity-10",
+        "topic": "entity",
+        "claim": "Skin-Stealers are large humanoid entities that wear victims' skin as a disguise.",
+        "quote": "Entity 10, more commonly known as the Skin-Stealers, are large humanoid entities that can wear the skin of their victims as a disguise."
+      },
+      {
+        "id": "F19",
+        "page": "entity-10",
+        "topic": "entity",
+        "claim": "Skin-Stealers can mimic human speech.",
+        "quote": "Their blood is translucent, and they can mimic human speech."
+      },
+      {
+        "id": "F20",
+        "page": "entity-10",
+        "topic": "entity",
+        "claim": "Skin-Stealers are tall, pale yellow humanoids with sunken white eyes.",
+        "quote": "Skin-Stealers are tall, pale yellow humanoids with sunken white eyes."
+      },
+      {
+        "id": "F22",
+        "page": "level-1",
+        "topic": "advice",
+        "claim": "Wanderers should not approach a single humanoid presence unless sure it is human.",
+        "quote": "Don't approach single humanoid presence when you're not sure they're humans. Keep in mind real people often wander around in groups."
+      },
+      {
+        "id": "F23",
+        "page": "level-1",
+        "topic": "entrance",
+        "claim": "Level 0 is the only entrance to the Habitable Zone the reader knows of so far.",
+        "quote": "So far, the only entrance to the Habitable Zone you know of is Level 0."
+      },
+      {
+        "id": "F24",
+        "page": "level-1",
+        "topic": "entrance",
+        "claim": "Some Level 1 entrances are smoother gradual environmental changes.",
+        "quote": "Some other entrances are smoother, which means there are gradual changes in the environment."
+      },
+      {
+        "id": "F26",
+        "page": "level-1",
+        "topic": "exit",
+        "claim": "Level 2 is the most common exit from Level 1.",
+        "quote": "Level 2, also nicknamed \"Abandoned Utility Halls\", is the most common exit you will come across, as it is part of the \"Main Twelve\"14."
+      },
+      {
+        "id": "F27",
+        "page": "level-1",
+        "topic": "exit",
+        "claim": "Walking toward pipes and dials can lead from Level 1 to Level 2.",
+        "quote": "The threshold from Level 1 to Level 2 is a smooth one, meaning simply walking far enough in a direction with pipes and dials gradually appearing will make you enter the Abandoned Utility Halls."
+      },
+      {
+        "id": "F31",
+        "page": "level-1",
+        "topic": "difficulty",
+        "claim": "Level 1 has anomalous resources.",
+        "quote": "- Presence of Anomalous Resources."
+      },
+      {
+        "id": "F32",
+        "page": "object-1",
+        "topic": "object",
+        "claim": "Almond Water is Object 1.",
+        "quote": "Object 1, better known as Almond Water, is a very useful object that can be obtained on most levels of the Backrooms."
+      },
+      {
+        "id": "F33",
+        "page": "object-1",
+        "topic": "object",
+        "claim": "Almond Water is a set of metal thermoses filled with clear liquid.",
+        "quote": "It is a set of metal thermoses filled with clear liquid."
+      },
+      {
+        "id": "F36",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "Level 1 can look like a barren parking structure with miles of concrete.",
+        "quote": "The area was some sort of barren parking structure with miles of unforgiving concrete leading into the distance."
+      },
+      {
+        "id": "F37",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "Level 1 floors can have debris made of wood, packing material, and metal.",
+        "quote": "Small piles of debris littered sections of the floor: pieces of wood, packing material, and metal."
+      },
+      {
+        "id": "F39",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "The Garden Sector has been overgrown since times unknown and affects human life.",
+        "quote": "Overgrown since times unknown, the Garden Sector has a rather unusual effect on human life."
+      },
+      {
+        "id": "F40",
+        "page": "level-1",
+        "topic": "look",
+        "claim": "Level 1 can include a large corridor lined with metal shelves stocked with wooden crates.",
+        "quote": "I saw a large corridor lined with metal shelves straight out of the back rooms of a retail store. They were stocked with crates composed of a familiar wood, the same wood I had seen scraps of throughout the area."
+      },
+      {
+        "id": "F45",
+        "page": "level-1",
+        "topic": "resource",
+        "claim": "Food and drink are scarce in the corridors but can be found in occasional furnished rooms.",
+        "quote": "If you didn't find anything to eat or drink while in the halls but still have to enter the corridors, don't worry! While scarce, some can be found in the occasional furnished room."
+      },
+      {
+        "id": "F46",
+        "page": "object-1",
+        "topic": "resource",
+        "claim": "Almond Water is a group of colored thermoses of liquid found on various levels of the Backrooms.",
+        "quote": "Object 1 is a group of colored thermoses of liquid that can be found on various levels of The Backrooms. It is one of the most sought-after and useful objects a wanderer can obtain."
+      },
+      {
+        "id": "F47",
+        "page": "object-1",
+        "topic": "resource",
+        "claim": "Most Almond Water bottles are slightly damaged or worn with dents or scratches.",
+        "quote": "Most of the bottles are usually slightly damaged or worn with marks, such as dents or scratches in the paint."
+      },
+      {
+        "id": "F54",
+        "page": "level-1",
+        "topic": "advice",
+        "claim": "Do not become too self-assured in Level 1.",
+        "quote": "This doesn't mean you should take too much confidence so hastily either! Getting too self-assured is the number one cause of death among new wanderers."
+      }
+    ],
+    "because": {
+      "briefing": [
+        "F01",
+        "F02",
+        "F14",
+        "F17",
+        "F18",
+        "F23",
+        "M1",
+        "M4",
+        "M5",
+        "M6"
+      ],
+      "themes.grey_halls": [
+        "F01",
+        "F03",
+        "F36",
+        "F37"
+      ],
+      "themes.warehouse_pipes": [
+        "F02",
+        "F07",
+        "F10",
+        "F40"
+      ],
+      "themes.stagnant_crates": [
+        "F08",
+        "F09",
+        "F10"
+      ],
+      "themes.gild_sector": [
+        "F04",
+        "F10",
+        "F12"
+      ],
+      "themes.garden_floor": [
+        "F06",
+        "F37",
+        "F39"
+      ],
+      "rooms.r0_0": [
+        "F01",
+        "F03",
+        "F37",
+        "M15"
+      ],
+      "rooms.r1_0": [
+        "F01",
+        "F37",
+        "F45",
+        "M3",
+        "M15"
+      ],
+      "rooms.r2_0": [
+        "F01",
+        "F03",
+        "F37",
+        "M3",
+        "M6",
+        "M9",
+        "M15"
+      ],
+      "rooms.r3_0": [
+        "F07",
+        "F40",
+        "M4",
+        "M15"
+      ],
+      "rooms.r0_1": [
+        "F07",
+        "F40",
+        "M15"
+      ],
+      "rooms.r1_1": [
+        "F08",
+        "F10",
+        "M3",
+        "M6",
+        "M9",
+        "M15"
+      ],
+      "rooms.r2_1": [
+        "F07",
+        "F40",
+        "F45",
+        "M3",
+        "M15"
+      ],
+      "rooms.r3_1": [
+        "F04",
+        "F10",
+        "M4",
+        "M15"
+      ],
+      "rooms.r0_2": [
+        "F08",
+        "F10",
+        "M15"
+      ],
+      "rooms.r1_2": [
+        "F08",
+        "F10",
+        "F32",
+        "F33",
+        "F46",
+        "F47",
+        "M3",
+        "M15"
+      ],
+      "rooms.r2_2": [
+        "F04",
+        "F10",
+        "M2",
+        "M15"
+      ],
+      "rooms.r3_2": [
+        "F06",
+        "F37",
+        "F39",
+        "M15"
+      ],
+      "rooms.r0_3": [
+        "F06",
+        "F09",
+        "F37",
+        "F39",
+        "M15"
+      ],
+      "rooms.r1_3": [
+        "F07",
+        "F09",
+        "F40",
+        "M15"
+      ],
+      "rooms.r2_3": [
+        "F04",
+        "F10",
+        "M4",
+        "M15"
+      ],
+      "rooms.r3_3": [
+        "F04",
+        "F10",
+        "F26",
+        "F27",
+        "M4",
+        "M15"
+      ],
+      "items.almond_water": [
+        "F32",
+        "F33",
+        "F46",
+        "F47",
+        "M3"
+      ],
+      "items.canned_soup": [
+        "F45",
+        "M3"
+      ],
+      "items.granola": [
+        "F45",
+        "M3"
+      ],
+      "items.vhs": [
+        "M4"
+      ],
+      "items.valve": [
+        "M4"
+      ],
+      "items.fuse": [
+        "M4"
+      ],
+      "items.small_key": [
+        "M2"
+      ],
+      "items.quiet_cot": [
+        "M3",
+        "M6",
+        "M9"
+      ],
+      "items.buzzing_mattress": [
+        "M3",
+        "M6",
+        "M9"
+      ],
+      "text.intro1": [
+        "F23",
+        "F24",
+        "M1"
+      ],
+      "text.intro2": [
+        "F01",
+        "F09"
+      ],
+      "text.goal": [
+        "M4"
+      ],
+      "text.huntWarn": [
+        "F14",
+        "F15",
+        "F17",
+        "M5",
+        "M6"
+      ],
+      "text.huntStart": [
+        "F14",
+        "F17",
+        "F18",
+        "M5"
+      ],
+      "text.huntTaken": [
+        "F14",
+        "F17",
+        "M4",
+        "M5"
+      ],
+      "text.huntEnd": [
+        "F07",
+        "F08",
+        "F14"
+      ],
+      "text.hudHunt": [
+        "F14"
+      ],
+      "text.refuge": [
+        "F54",
+        "M6"
+      ],
+      "text.monsterNear": [
+        "F20",
+        "M10"
+      ],
+      "text.tipDeath": [
+        "F17",
+        "F22",
+        "M5",
+        "M6"
+      ],
+      "text.wake": [
+        "M3"
+      ],
+      "text.collapse": [
+        "M3"
+      ],
+      "text.hungry": [
+        "F45",
+        "M3"
+      ],
+      "text.tired": [
+        "F09",
+        "M3"
+      ],
+      "text.eat": [
+        "F16",
+        "F31",
+        "F32",
+        "M3"
+      ],
+      "text.keyTaken": [
+        "M2"
+      ],
+      "text.restQuiet": [
+        "F01",
+        "M3",
+        "M9"
+      ],
+      "text.restLoud": [
+        "F17",
+        "M9"
+      ],
+      "text.doorShut": [
+        "M4"
+      ],
+      "text.doorOpen": [
+        "F26",
+        "F27",
+        "M4",
+        "M7"
+      ],
+      "text.exitSign": [
+        "F26"
+      ],
+      "text.objectiveParts": [
+        "M4"
+      ],
+      "text.objectiveKey": [
+        "M2"
+      ],
+      "text.objectiveExit": [
+        "F26",
+        "F27",
+        "M7"
+      ],
+      "text.tipParts": [
+        "M4",
+        "M15"
+      ],
+      "text.tipHall": [
+        "M7"
+      ],
+      "text.sealed": [
+        "F11"
+      ],
+      "text.chair": [
+        "F10",
+        "F13",
+        "M12"
+      ],
+      "text.keyTurns": [
+        "M2"
+      ],
+      "text.noDoor": [
+        "F11",
+        "M11"
+      ],
+      "text.hallSign": [
+        "M7"
+      ],
+      "text.hallEnter": [
+        "M7"
+      ],
+      "text.hallLook": [
+        "M7"
+      ],
+      "text.hallLooked": [
+        "M7"
+      ],
+      "text.hallPace": [
+        "F07"
+      ],
+      "text.hallSigns": [
+        "M7",
+        "M11"
+      ],
+      "text.hallLight": [
+        "F27",
+        "M7"
+      ],
+      "text.epiBig": [
+        "M8"
+      ],
+      "text.epi1": [
+        "F26",
+        "M8"
+      ],
+      "text.epi2": [
+        "F26",
+        "M8"
+      ],
+      "text.epiSign": [
+        "F26"
+      ],
+      "text.epiEnd": [
+        "M8"
+      ],
+      "text.epi3": [
+        "F01",
+        "M8"
+      ],
+      "text.loop": [
+        "F01",
+        "M1",
+        "M8"
+      ],
+      "text.whispers": [
+        "F07",
+        "F08",
+        "F11",
+        "F13"
+      ],
+      "monster": [
+        "F18",
+        "F19",
+        "F20"
+      ]
+    },
+    "rounds": 1
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "_about": "Every line of text the mod reads from a level file (level.text.<key>). halls.lua looks each one up with L(\"key\", fallback). kind: lore = must rest on wiki facts (F ids); mechanic = must rest on how the mod plays (M ids); both = needs one of each. vars are placeholders that must stay in the line. needs: the line must cite at least one fact with one of these topics.",
+  "keys": {
+    "intro1": {
+      "kind": "both",
+      "max": 70,
+      "when": "First subtitle. The elevator ride from Level 0 has just stopped early.",
+      "needs": [
+        "entrance"
+      ]
+    },
+    "intro2": {
+      "kind": "lore",
+      "max": 70,
+      "when": "Second subtitle. The elevator doors open onto this level. First look at the place.",
+      "needs": [
+        "look",
+        "sense"
+      ]
+    },
+    "goal": {
+      "kind": "mechanic",
+      "max": 110,
+      "when": "Third subtitle. Says what the group has to do: find the tape, the valve and the fuse, then leave through the exit door.",
+      "says": [
+        "door"
+      ]
+    },
+    "huntWarn": {
+      "kind": "both",
+      "max": 110,
+      "when": "Fourth subtitle. Warns what happens when the lights go out and where to go.",
+      "needs": [
+        "advice",
+        "phenomenon"
+      ],
+      "says": [
+        "bed",
+        "cot",
+        "mattress"
+      ]
+    },
+    "huntStart": {
+      "kind": "both",
+      "max": 100,
+      "when": "The lights have just gone out and the hunt begins.",
+      "needs": [
+        "phenomenon"
+      ]
+    },
+    "huntTaken": {
+      "kind": "both",
+      "max": 100,
+      "when": "The lights go out because a player just picked up one of the three parts."
+    },
+    "huntEnd": {
+      "kind": "lore",
+      "max": 80,
+      "when": "The lights come back and the hunt is over.",
+      "needs": [
+        "phenomenon"
+      ]
+    },
+    "hudHunt": {
+      "kind": "lore",
+      "max": 14,
+      "when": "One or two words in capitals on the HUD while the lights are out.",
+      "needs": [
+        "phenomenon"
+      ]
+    },
+    "refuge": {
+      "kind": "both",
+      "max": 90,
+      "when": "Lights are out and every player is inside a room with a bed. The entity is not sent after them.",
+      "needs": [
+        "advice"
+      ],
+      "says": [
+        "here",
+        "this room",
+        "bed"
+      ]
+    },
+    "monsterNear": {
+      "kind": "lore",
+      "max": 80,
+      "vars": [
+        "name"
+      ],
+      "when": "The room lamp stutters because the entity is close. {name} is the entity's name.",
+      "needs": [
+        "entity"
+      ]
+    },
+    "tipDeath": {
+      "kind": "both",
+      "max": 60,
+      "when": "One-line tip on the death screen after the entity killed the player.",
+      "needs": [
+        "entity",
+        "phenomenon"
+      ]
+    },
+    "wake": {
+      "kind": "mechanic",
+      "max": 90,
+      "when": "The group passed out from hunger or exhaustion and wakes in the room where the elevator let them out, with a little over half of hunger and stamina."
+    },
+    "collapse": {
+      "kind": "mechanic",
+      "max": 50,
+      "when": "Hunger or stamina just reached zero. The player is about to pass out."
+    },
+    "hungry": {
+      "kind": "both",
+      "max": 70,
+      "when": "Hunger is low. Tells the player to find something to eat.",
+      "says": [
+        "food",
+        "eat",
+        "drink"
+      ]
+    },
+    "tired": {
+      "kind": "both",
+      "max": 70,
+      "when": "Stamina is low. Tells the player to find somewhere to rest.",
+      "says": [
+        "bed",
+        "cot",
+        "mattress",
+        "rest",
+        "sleep"
+      ]
+    },
+    "eat": {
+      "kind": "lore",
+      "max": 80,
+      "vars": [
+        "item"
+      ],
+      "when": "The player ate or drank {item} (lower-case item name).",
+      "needs": [
+        "resource",
+        "object"
+      ]
+    },
+    "keyTaken": {
+      "kind": "mechanic",
+      "max": 60,
+      "vars": [
+        "item"
+      ],
+      "when": "The player picked up the small key. {item} is its lower-case name."
+    },
+    "restQuiet": {
+      "kind": "both",
+      "max": 80,
+      "when": "The player rests on the quiet bed. Nothing happens."
+    },
+    "restLoud": {
+      "kind": "both",
+      "max": 90,
+      "when": "The player rests on the noisy bed. The noise draws the entity one room closer."
+    },
+    "doorShut": {
+      "kind": "mechanic",
+      "max": 70,
+      "vars": [
+        "parts"
+      ],
+      "when": "The player tried the exit door without all three parts. {parts} lists the missing ones."
+    },
+    "doorOpen": {
+      "kind": "both",
+      "max": 60,
+      "when": "The exit door takes the three parts and slides open."
+    },
+    "exitSign": {
+      "kind": "lore",
+      "max": 14,
+      "when": "One word in capitals on the sign over the exit door. Also used in prompts: 'TRY THE <word> DOOR'. Not EXIT: untrustworthy EXIT signs already hang in the level. Take a word from the facts about the way out.",
+      "needs": [
+        "exit"
+      ]
+    },
+    "objectiveParts": {
+      "kind": "mechanic",
+      "max": 40,
+      "when": "Objective row in the game's overview: find the tape, the valve and the fuse."
+    },
+    "objectiveKey": {
+      "kind": "mechanic",
+      "max": 40,
+      "when": "Objective row: find the small key."
+    },
+    "objectiveExit": {
+      "kind": "both",
+      "max": 40,
+      "when": "Objective row: leave through the exit door and the hall behind it. Should use the word from exitSign."
+    },
+    "tipParts": {
+      "kind": "mechanic",
+      "max": 60,
+      "when": "One-line tip in the overview while parts are still missing. They lie on small tables in the rooms."
+    },
+    "tipHall": {
+      "kind": "mechanic",
+      "max": 60,
+      "when": "One-line tip in the overview once the exit door is open: walk the hall and do not look back.",
+      "says": [
+        "look back",
+        "looking back",
+        "turn around",
+        "turn back"
+      ]
+    },
+    "sealed": {
+      "kind": "lore",
+      "max": 70,
+      "when": "A trick: the doorway the player just came through is plain wall when they turn around."
+    },
+    "chair": {
+      "kind": "lore",
+      "max": 70,
+      "when": "A trick: a wooden crate that stood against the wall has moved closer while nobody looked."
+    },
+    "keyTurns": {
+      "kind": "mechanic",
+      "max": 70,
+      "when": "A trick: the locked door unlocks by itself as the player carrying the small key walks up."
+    },
+    "noDoor": {
+      "kind": "lore",
+      "max": 60,
+      "when": "A trick: a doorway with an EXIT sign led into a dead-end passage, and is gone when the player comes back out."
+    },
+    "hallSign": {
+      "kind": "mechanic",
+      "max": 20,
+      "when": "Capitals on a sign at the start of the long hall behind the exit door. Looking back there undoes progress.",
+      "says": [
+        "look back"
+      ]
+    },
+    "hallEnter": {
+      "kind": "mechanic",
+      "max": 40,
+      "when": "The player steps into the long hall behind the exit door.",
+      "says": [
+        "look back",
+        "looking back",
+        "turn around",
+        "turn back"
+      ]
+    },
+    "hallLook": {
+      "kind": "mechanic",
+      "max": 40,
+      "when": "The player looked back in the hall before making any progress.",
+      "says": [
+        "look",
+        "turn"
+      ]
+    },
+    "hallLooked": {
+      "kind": "mechanic",
+      "max": 80,
+      "when": "The player looked back in the hall and lost the distance already walked.",
+      "says": [
+        "look",
+        "turn"
+      ]
+    },
+    "hallPace": {
+      "kind": "lore",
+      "max": 60,
+      "when": "Part way down the hall. Something seems to follow."
+    },
+    "hallSigns": {
+      "kind": "mechanic",
+      "max": 80,
+      "when": "Further down the hall. The EXIT signs overhead show a distance that is counting down."
+    },
+    "hallLight": {
+      "kind": "lore",
+      "max": 70,
+      "when": "The end of the hall is finally in sight."
+    },
+    "epiBig": {
+      "kind": "mechanic",
+      "max": 26,
+      "when": "Big capitals when the player reaches the room at the end of the hall."
+    },
+    "epi1": {
+      "kind": "lore",
+      "max": 70,
+      "when": "First line in the small room at the end of the hall. It has one closed sliding door."
+    },
+    "epi2": {
+      "kind": "lore",
+      "max": 70,
+      "when": "Second line in that room, just before the door's sign lights up with the name of the next level."
+    },
+    "epiSign": {
+      "kind": "lore",
+      "max": 12,
+      "when": "Capitals on the sign over that door: the level this level's exit leads to according to the wiki, as 'LEVEL <number>'.",
+      "needs": [
+        "exit"
+      ]
+    },
+    "epiEnd": {
+      "kind": "mechanic",
+      "max": 16,
+      "when": "Big capitals as that door slides open. The floor is about to start over, so it should leave doubt."
+    },
+    "epi3": {
+      "kind": "both",
+      "max": 80,
+      "when": "The door stands open. Walking through starts the same floor again."
+    },
+    "loop": {
+      "kind": "both",
+      "max": 80,
+      "vars": [
+        "n"
+      ],
+      "when": "The player walked through and is back in the first room. {n} is the loop number. Must start with 'LOOP {n}.'"
+    }
+  },
+  "lists": {
+    "whispers": {
+      "kind": "lore",
+      "count": 4,
+      "max": 80,
+      "when": "Shown one at a time when a player has stood in the same room for 40 seconds. Quiet, unsettling observations about the place."
+    }
+  }
+}

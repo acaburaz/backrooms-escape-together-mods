@@ -1,0 +1,445 @@
+{
+  "pages": [
+    "entity-10",
+    "level-1",
+    "object-1"
+  ],
+  "model": "gpt-5.5",
+  "extracted": "2026-11-17T11:37:16Z",
+  "facts": [
+    {
+      "id": "F01",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "Level 1 has wide halls with bland, discolored walls and occasional concrete pillars.",
+      "quote": "Right now, you are standing in the halls. They're wide and open areas with a consistent architecture of bland, discolored walls that stretch over for miles, with the occasional concrete pillars maintaining the structure's integrity."
+    },
+    {
+      "id": "F02",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "Wanderers describe Level 1 as like an underground parking lot crossed with an abandoned warehouse.",
+      "quote": "Many wanderers describe this place as \"an endless chimera between an underground parking lot and an abandoned warehouse\", a description that might spark some familiarity for you."
+    },
+    {
+      "id": "F03",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "The Aquila Sector has grey walls and flooring with huge concrete pillars.",
+      "quote": "Grey walls and flooring with huge concrete pillars compose the Aquila Sector, the most well-known part of the Habitable Zone."
+    },
+    {
+      "id": "F04",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "The Gild Sector has more lights and more diverse architecture than other parts of Level 1.",
+      "quote": "More colorful than the Aquila Sector, the Gild Sector features more lights and a more diverse architecture than other parts of Level 1."
+    },
+    {
+      "id": "F05",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "The Gothic Sector has arches and circular pillars.",
+      "quote": "The Gothic Sector gets its name from its more curved structure, with arches and circular pillars making up most of the area."
+    },
+    {
+      "id": "F06",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "The Garden Sector has verdant colors and blooming life.",
+      "quote": "Do not be fooled by the verdant colors and blooming life! Out of the many parts of the Habitable Zone, the Garden Sector is one of the few that doesn't suit human life."
+    },
+    {
+      "id": "F07",
+      "page": "level-1",
+      "topic": "sense",
+      "claim": "Level 1 can have clangs echoing through ceiling pipes.",
+      "quote": "Random clangs echoed through the pipes on the ceiling, though it was far less obnoxious than the incessant hum-buzz of the yellow rooms."
+    },
+    {
+      "id": "F08",
+      "page": "level-1",
+      "topic": "sense",
+      "claim": "Level 1 puddles can smell unclean and stagnant.",
+      "quote": "The puddles around me smelled unclean, the plastic scent of stagnation clinging to the air."
+    },
+    {
+      "id": "F09",
+      "page": "level-1",
+      "topic": "sense",
+      "claim": "Level 1 air can feel stuffy and humid.",
+      "quote": "The air felt stuffy and humid; if only I could crack a window and get any modicum of fresh air."
+    },
+    {
+      "id": "F10",
+      "page": "level-1",
+      "topic": "phenomenon",
+      "claim": "Level 1 halls have crates and frequent light flickering.",
+      "quote": "The halls of the Habitable Zone host two specific phenomena. The apparition of crates, being the only way to get resources, and the frequent flickering of the lights, creating small blackouts where the anomalous wildlife of the level tends to come out."
+    },
+    {
+      "id": "F11",
+      "page": "level-1",
+      "topic": "phenomenon",
+      "claim": "Level 1 has non-Euclidean geometry that fabricates perceived distances.",
+      "quote": "The Habitable Zone is subject to what we call \"non-Euclidean geometry\". This means that distances you perceive are fabricated by your senses, and that your surroundings aren't what you think they look like."
+    },
+    {
+      "id": "F12",
+      "page": "level-1",
+      "topic": "phenomenon",
+      "claim": "Level 1 sectors are similar yet distinct zones.",
+      "quote": "Those shifts in the landscape are tied to a partition of the level into similar yet distinct zones wanderers call \"sectors\"."
+    },
+    {
+      "id": "F13",
+      "page": "level-1",
+      "topic": "phenomenon",
+      "claim": "Objects like paintings and crates in Level 1 can disappear when not looked at.",
+      "quote": "Note the presence of a painting oddly placed on the floor, right before the doors leading to the halls. Like crates, they have a tendency to disappear when not looked at."
+    },
+    {
+      "id": "F14",
+      "page": "level-1",
+      "topic": "phenomenon",
+      "claim": "Flickering makes all natural lights in Level 1 switch off.",
+      "quote": "As its rather upfront name indicates, Flickering refers to random times when all the natural lights of the Habitable Zone switch off, engulfing the level in complete darkness."
+    },
+    {
+      "id": "F15",
+      "page": "level-1",
+      "topic": "phenomenon",
+      "claim": "The start and duration of a Flickering event cannot be predicted.",
+      "quote": "Both the start and duration of a Flickering event cannot be predicted."
+    },
+    {
+      "id": "F16",
+      "page": "level-1",
+      "topic": "resource",
+      "claim": "Level 1 crates hold resources needed for survival.",
+      "quote": "Those boxes are called \"crates\" by wanderers and group members alike. While they look rather unassuming, they hold your only hope at survival: resources."
+    },
+    {
+      "id": "F17",
+      "page": "level-1",
+      "topic": "entity",
+      "claim": "Level 1 entities tend to hunt during Flickering events.",
+      "quote": "As said previously, entities tend to hunt during Flickering events, but this doesn't mean you won't find any when the lights are on."
+    },
+    {
+      "id": "F18",
+      "page": "entity-10",
+      "topic": "entity",
+      "claim": "Skin-Stealers are large humanoid entities that wear victims' skin as a disguise.",
+      "quote": "Entity 10, more commonly known as the Skin-Stealers, are large humanoid entities that can wear the skin of their victims as a disguise."
+    },
+    {
+      "id": "F19",
+      "page": "entity-10",
+      "topic": "entity",
+      "claim": "Skin-Stealers can mimic human speech.",
+      "quote": "Their blood is translucent, and they can mimic human speech."
+    },
+    {
+      "id": "F20",
+      "page": "entity-10",
+      "topic": "entity",
+      "claim": "Skin-Stealers are tall, pale yellow humanoids with sunken white eyes.",
+      "quote": "Skin-Stealers are tall, pale yellow humanoids with sunken white eyes."
+    },
+    {
+      "id": "F21",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "During Flickering, wanderers should enter a corridor section fast.",
+      "quote": "No hall is safe during a Flickering event, whatever the sector is. As such, as soon as one starts, you must enter a corridor section fast:"
+    },
+    {
+      "id": "F22",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Wanderers should not approach a single humanoid presence unless sure it is human.",
+      "quote": "Don't approach single humanoid presence when you're not sure they're humans. Keep in mind real people often wander around in groups."
+    },
+    {
+      "id": "F23",
+      "page": "level-1",
+      "topic": "entrance",
+      "claim": "Level 0 is the only entrance to the Habitable Zone the reader knows of so far.",
+      "quote": "So far, the only entrance to the Habitable Zone you know of is Level 0."
+    },
+    {
+      "id": "F24",
+      "page": "level-1",
+      "topic": "entrance",
+      "claim": "Some Level 1 entrances are smoother gradual environmental changes.",
+      "quote": "Some other entrances are smoother, which means there are gradual changes in the environment."
+    },
+    {
+      "id": "F25",
+      "page": "level-1",
+      "topic": "entrance",
+      "claim": "Entrances to Level 1 can occur through no-clipping.",
+      "quote": "Entrances can also occur through no-clipping, similar to Level 0:"
+    },
+    {
+      "id": "F26",
+      "page": "level-1",
+      "topic": "exit",
+      "claim": "Level 2 is the most common exit from Level 1.",
+      "quote": "Level 2, also nicknamed \"Abandoned Utility Halls\", is the most common exit you will come across, as it is part of the \"Main Twelve\"14."
+    },
+    {
+      "id": "F27",
+      "page": "level-1",
+      "topic": "exit",
+      "claim": "Walking toward pipes and dials can lead from Level 1 to Level 2.",
+      "quote": "The threshold from Level 1 to Level 2 is a smooth one, meaning simply walking far enough in a direction with pipes and dials gradually appearing will make you enter the Abandoned Utility Halls."
+    },
+    {
+      "id": "F28",
+      "page": "level-1",
+      "topic": "exit",
+      "claim": "Glass doors from Level 1 lead to Level 22.",
+      "quote": "Glass doors will lead to Level 22 - \"Ruins Left Behind\""
+    },
+    {
+      "id": "F29",
+      "page": "level-1",
+      "topic": "difficulty",
+      "claim": "Level 1 has survival difficulty 1.",
+      "quote": "SURVIVAL DIFFICULTY: 1"
+    },
+    {
+      "id": "F30",
+      "page": "level-1",
+      "topic": "difficulty",
+      "claim": "Level 1 is safe and secure.",
+      "quote": "- Safe and Secure."
+    },
+    {
+      "id": "F31",
+      "page": "level-1",
+      "topic": "difficulty",
+      "claim": "Level 1 has anomalous resources.",
+      "quote": "- Presence of Anomalous Resources."
+    },
+    {
+      "id": "F32",
+      "page": "object-1",
+      "topic": "object",
+      "claim": "Almond Water is Object 1.",
+      "quote": "Object 1, better known as Almond Water, is a very useful object that can be obtained on most levels of the Backrooms."
+    },
+    {
+      "id": "F33",
+      "page": "object-1",
+      "topic": "object",
+      "claim": "Almond Water is a set of metal thermoses filled with clear liquid.",
+      "quote": "It is a set of metal thermoses filled with clear liquid."
+    },
+    {
+      "id": "F34",
+      "page": "object-1",
+      "topic": "object",
+      "claim": "Almond Water is safe to consume by default if it has not been tampered with.",
+      "quote": "Almond Water, granted that it has not been tampered with, is safe to consume by default; however, certain levels can have an anomalous effect that makes the liquid cause symptoms similar to cyanide poisoning to the drinker."
+    },
+    {
+      "id": "F35",
+      "page": "object-1",
+      "topic": "object",
+      "claim": "One whole bottle of Almond Water has the nutritional value of a healthy 600-calorie meal.",
+      "quote": "Drinking one whole bottle of Almond Water provides the same nutritional value as a healthy, 600-calorie meal, meaning that three bottles a day will provide sufficient daily nutrition for the average, healthy person."
+    },
+    {
+      "id": "F36",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "Level 1 can look like a barren parking structure with miles of concrete.",
+      "quote": "The area was some sort of barren parking structure with miles of unforgiving concrete leading into the distance."
+    },
+    {
+      "id": "F37",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "Level 1 floors can have debris made of wood, packing material, and metal.",
+      "quote": "Small piles of debris littered sections of the floor: pieces of wood, packing material, and metal."
+    },
+    {
+      "id": "F38",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "The corridors contain rooms that are purposeless and devoid of sense and logic.",
+      "quote": "Of course, the corridors aren't devoid of rooms, quite the opposite in fact. However, much like the rest of the Habitable Zone, they are purposeless, devoid of sense and logic."
+    },
+    {
+      "id": "F39",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "The Garden Sector has been overgrown since times unknown and affects human life.",
+      "quote": "Overgrown since times unknown, the Garden Sector has a rather unusual effect on human life."
+    },
+    {
+      "id": "F40",
+      "page": "level-1",
+      "topic": "look",
+      "claim": "Level 1 can include a large corridor lined with metal shelves stocked with wooden crates.",
+      "quote": "I saw a large corridor lined with metal shelves straight out of the back rooms of a retail store. They were stocked with crates composed of a familiar wood, the same wood I had seen scraps of throughout the area."
+    },
+    {
+      "id": "F41",
+      "page": "level-1",
+      "topic": "resource",
+      "claim": "Crates of the Habitable Zone have diverse contents.",
+      "quote": "Crates of the Habitable Zone are by nature diverse in content."
+    },
+    {
+      "id": "F42",
+      "page": "level-1",
+      "topic": "resource",
+      "claim": "Crates can contain helpful items and harmful items such as chemicals, explosives, glass shards, or solid nitrogen.",
+      "quote": "Crates hold many helpful items, but can also contain some harmful ones: chemicals, explosives, or even specific objects like glass shards or cubes of solid nitrogen."
+    },
+    {
+      "id": "F43",
+      "page": "level-1",
+      "topic": "resource",
+      "claim": "Portable stoves can be found in crates.",
+      "quote": "Please note that camping equipment like portable stoves can be found in crates if you do not wish to eat cold food."
+    },
+    {
+      "id": "F44",
+      "page": "level-1",
+      "topic": "resource",
+      "claim": "Planks scavenged from crates can be used to start a fire.",
+      "quote": "You can use planks you scavenged from crates to start a fire."
+    },
+    {
+      "id": "F45",
+      "page": "level-1",
+      "topic": "resource",
+      "claim": "Food and drink are scarce in the corridors but can be found in occasional furnished rooms.",
+      "quote": "If you didn't find anything to eat or drink while in the halls but still have to enter the corridors, don't worry! While scarce, some can be found in the occasional furnished room."
+    },
+    {
+      "id": "F46",
+      "page": "object-1",
+      "topic": "resource",
+      "claim": "Almond Water is a group of colored thermoses of liquid found on various levels of the Backrooms.",
+      "quote": "Object 1 is a group of colored thermoses of liquid that can be found on various levels of The Backrooms. It is one of the most sought-after and useful objects a wanderer can obtain."
+    },
+    {
+      "id": "F47",
+      "page": "object-1",
+      "topic": "resource",
+      "claim": "Most Almond Water bottles are slightly damaged or worn with dents or scratches.",
+      "quote": "Most of the bottles are usually slightly damaged or worn with marks, such as dents or scratches in the paint."
+    },
+    {
+      "id": "F48",
+      "page": "object-1",
+      "topic": "resource",
+      "claim": "Almond Water provides vitamins and nutrients such as protein, sodium, and fat.",
+      "quote": "Aside from calories, the water also provides necessary vitamins and nutrients such as protein, sodium, and fat."
+    },
+    {
+      "id": "F49",
+      "page": "entity-10",
+      "topic": "entity",
+      "claim": "Skin-Stealers are most commonly found on the first 3 levels.",
+      "quote": "They are most commonly found on the first 3 levels, but have been seen in many other levels."
+    },
+    {
+      "id": "F50",
+      "page": "entity-10",
+      "topic": "entity",
+      "claim": "In a hunger state, Skin-Stealers seek out lone humans and tear them apart with their hands.",
+      "quote": "In a hunger state, they will seek out humans wandering alone and will then use their strength to tear them apart with their hands."
+    },
+    {
+      "id": "F51",
+      "page": "entity-10",
+      "topic": "entity",
+      "claim": "Skin-Stealers have microscopic bumps that stick to torn human skin and make it fit until they look identical to humans.",
+      "quote": "Their outer layer of flesh is covered with microscopic bumps similar to the suckers of an octopus' tentacle. These stick to skin that is torn off of humans, and push and pull on it to make it fit, until the Skin-Stealer looks identical to a human."
+    },
+    {
+      "id": "F52",
+      "page": "entity-10",
+      "topic": "entity",
+      "claim": "A Skin-Stealer can speak but cannot understand language.",
+      "quote": "A Skin-Stealer also has the ability to speak, but it cannot understand language."
+    },
+    {
+      "id": "F53",
+      "page": "entity-10",
+      "topic": "entity",
+      "claim": "A Skin-Stealer repeats what it hears to lure prey but cannot actually communicate.",
+      "quote": "It will repeat what it hears (often in varying languages) in order to lure in prey, but it cannot actually communicate."
+    },
+    {
+      "id": "F54",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Do not become too self-assured in Level 1.",
+      "quote": "This doesn't mean you should take too much confidence so hastily either! Getting too self-assured is the number one cause of death among new wanderers."
+    },
+    {
+      "id": "F55",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Do not think you have mastered non-Euclidean exploration in only a few hours.",
+      "quote": "Distances you see will always be artificial, so don't think you mastered non-Euclidean exploration in only a few hours!"
+    },
+    {
+      "id": "F56",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Gather everything needed before leaving the halls.",
+      "quote": "As such, make sure you gather everything you need before leaving the halls!"
+    },
+    {
+      "id": "F57",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Identify everything in a crate before putting your hands into it.",
+      "quote": "I understand you'll probably be excited to see food or Almond Water within them, but remember to always identify everything within the crate before putting your hands into it."
+    },
+    {
+      "id": "F58",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Only take what will be useful because backpack space is limited.",
+      "quote": "Your backpack (or whatever bag you managed to find down there) has limited space, so only take what you're sure will be useful to you."
+    },
+    {
+      "id": "F59",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Do not run if an entity approaches.",
+      "quote": "If you see or hear the entity approaching, do not run! The non-euclidian structure of the halls might bring you closer to the creature and get their attention faster."
+    },
+    {
+      "id": "F60",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Do not use guns on faraway entities because the noise will bring more entities.",
+      "quote": "Do not use guns to harm the entity while far away! Although you might take down an entity, the noise will only bring more to you."
+    },
+    {
+      "id": "F61",
+      "page": "level-1",
+      "topic": "advice",
+      "claim": "Do not fight any entity up close.",
+      "quote": "Do not pick a close-up fight with any entity either."
+    },
+    {
+      "id": "F62",
+      "page": "object-1",
+      "topic": "advice",
+      "claim": "Do not consume the contents of a bottle that is not full.",
+      "quote": "If a bottle that is not full is found, do not consume the contents inside, as this usually means it was used by another wanderer who could have tampered with the contents inside or spread something such as The Crawler Fungus."
+    }
+  ]
+}

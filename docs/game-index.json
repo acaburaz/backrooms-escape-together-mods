@@ -1,0 +1,54 @@
+{
+  "game": "Backrooms: Escape Together",
+  "engine": "UE 5.5",
+  "notes": "Asset paths from the game's install manifest (Manifest_UFSFiles_Win64.txt in the game folder) that the mod hooks or spawns at runtime. Nothing is extracted from the game; scripts/verify-mod.mjs checks these paths still exist in the installed game.",
+  "maps": [
+    "BET/Content/Maps/MainLevels/Level_Hub/L_Level_Hub.umap",
+    "BET/Content/Maps/MainLevels/Level_0/L_Level_0.umap",
+    "BET/Content/Maps/MiscMaps/TransitionMap.umap",
+    "BET/Content/Maps/BR_MainMenu/BR_MainMenu.umap"
+  ],
+  "levelDefinitions": [
+    "BET/Content/Core/LevelDefinitions/DA_Level_0.uasset",
+    "BET/Content/Core/LevelDefinitions/DA_Level_Hub.uasset",
+    "BET/Content/Core/DefaultGameData.uasset"
+  ],
+  "server": [
+    "BET/Content/Server/Blueprints/Level_Hub/BP_LevelHubGameMode.uasset",
+    "BET/Content/Server/Blueprints/Level_Hub/BP_LevelHubGameState.uasset",
+    "BET/Content/Maps/BR_MainMenu/BP_LobbyGameMode.uasset"
+  ],
+  "pickerWidgets": [
+    "BET/Content/UI/Journey/BPW_JourneyEntry.uasset",
+    "BET/Content/UI/Journey/BPW_JourneyLevelInfo.uasset",
+    "BET/Content/UI/Lobby/Multiplayer/W_Lobby.uasset",
+    "BET/Content/UI/Lobby/Multiplayer/WBP_MultiplayerLobbyView.uasset",
+    "BET/Content/UI/Lobby/CreateGame/WBP_CreateGameOnboarding.uasset",
+    "BET/Content/UI/Lobby/CreateGame/WBP_SelectMultiplayerOptions.uasset"
+  ],
+  "player": [
+    "BET/Content/Player/Blueprints/BP_Survivor_Character.uasset",
+    "BET/Content/Player/Blueprints/BP_SurvivorPlayerController.uasset",
+    "BET/Content/UI/HUD/Biometrics/BPW_BioView.uasset",
+    "BET/Content/UI/Definitions/DA_SurvivorAttributeNames.uasset"
+  ],
+  "entities": [
+    "BET/Content/Entities/Smiler/BP_SmilerCharacter.uasset",
+    "BET/Content/Entities/SkinStealer/BP_SkinStealer.uasset",
+    "BET/Content/Entities/Shadow/BP_ShadowEntity.uasset",
+    "BET/Content/Entities/Faceling/BP_Faceling.uasset"
+  ],
+  "items": [
+    "BET/Content/Player/Features/Inventory/Items/AlmondWater/BP_AlmondWater_Definition.uasset",
+    "BET/Content/Player/Features/Inventory/Items/CannedSoup/BP_CannedSoup_Definition.uasset",
+    "BET/Content/Player/Features/Inventory/Items/GranolaSquare/BP_GranolaSquare_Definition.uasset",
+    "BET/Content/Player/Features/Inventory/Items/SmallKey/BP_SmallKey_Definition.uasset",
+    "BET/Content/Player/Features/Inventory/Items/Fuse/BP_Fuse_Definition.uasset",
+    "BET/Content/Player/Features/Inventory/Items/Valve/BP_GreenValve_Definition.uasset",
+    "BET/Content/Player/Features/Inventory/Items/VHSTape/BP_Level0Tape_Definition.uasset"
+  ],
+  "doors": [
+    "BET/Content/Features/Enviroment/Core/BP_InteractableDoor.uasset"
+  ],
+  "travelMap": "/Game/Maps/MainLevels/Level_Hub/L_Level_Hub"
+}
