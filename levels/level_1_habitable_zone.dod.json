@@ -1,6 +1,6 @@
 {
   "level": "level_1_habitable_zone",
-  "checked": "2026-11-17T11:54:23Z",
+  "checked": "2026-11-17T12:32:44Z",
   "results": [
     {
       "id": "W1",
@@ -65,13 +65,13 @@
     {
       "id": "P1",
       "ok": true,
-      "what": "Playable: a route from the elevator to the exit exists, and it needs both food and rest",
+      "what": "Playable: a route from the elevator to the exit exists, with a refuge and the game's food on the floor",
       "detail": ""
     },
     {
       "id": "P2",
       "ok": true,
-      "what": "Honest lines: no room ids or directions, a room only mentions what is in it and what the mod builds, and nothing calls the map safe",
+      "what": "Honest lines: no room ids or directions, a room only mentions what is in it and what the mod builds, nothing calls the map safe, and nothing speaks of hunger, rest or passing out",
       "detail": ""
     },
     {

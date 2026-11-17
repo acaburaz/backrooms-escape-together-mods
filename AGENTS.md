@@ -5,7 +5,7 @@ What this is, how to install and play: `README.md`. This file says where the dat
 ## State on 2026-11-17
 
 - Active level: **Level 1 - "Habitable Zone"** (`levels/level_1_habitable_zone.json`), written by OpenAI (`gpt-5.5`) from 62 quoted wiki facts. It passes all 13 definition-of-done checks and the offline checks.
-- **Not yet run in the game:** the wiki level (its looks, props, refuge rule, crate, hall dials, level-driven text) and hand-made layouts. The older level `the_yellow_static` was played in the game before `halls.lua` got these additions.
+- **Not yet run in the game:** version 0.3.0 (see "Sanity and stamina" below), and hand-made layouts. The wiki level was entered in the game once for two minutes on 0.2.0 (the floor built and the elevator stopped; `UE4SS.log`), which is when the owner reported being moved and asked for the mod's own hunger and tiredness to go. Its looks, props, refuge rule, crate and hall dials have not been looked at in the game by an agent. The older level `the_yellow_static` was played in the game before `halls.lua` got these additions.
 - **Not yet run in a real Unreal editor:** `unreal/cbr_unreal.py`. It passes against `scripts/fake_unreal.py`, which was written from Epic's Python API reference.
 - Only wiki page `level-1` has been through the generator.
 
@@ -84,15 +84,15 @@ The wiki has no page that defines "done" for a mod. A wiki level page has fixed 
 | W8 | Entrances and exits | The opening cites an entrance fact; the last sign names the level a cited exit fact names |
 | W9 | all | Every key in `text_keys.json` is present, within length, keeps its placeholders and instructions, and cites a fact, a rule, or both |
 | W10 | all | No level, entity or object number and no name that is on none of the saved pages; no flashlight advice |
-| P1 | playable | A route from the elevator to the exit exists and needs both food and rest; the refuge rule is on |
-| P2 | playable | Rooms only describe what the mod builds there; nothing calls the map safe; the exit sign is not EXIT |
+| P1 | playable | A route from the elevator to the exit exists; the refuge rule is on, a room has a bed, the game's food is put out; no numbers of the mod's old hunger and stamina are left |
+| P2 | playable | Rooms only describe what the mod builds there; nothing calls the map safe; nothing speaks of hunger, resting, sleeping or passing out; the exit sign is not EXIT |
 | P3 | playable | The lines `halls.lua` reads are exactly the keys in `text_keys.json` |
 
 What the checks do not judge: whether a cited fact really fits its line. They check that the citation exists, is quoted on the page and is of the right topic. Read the lore sheet after each run. In the current level one citation is loose: the `refuge` line cites the advice about overconfidence (F54) rather than the advice to get into a corridor section (F21).
 
 The second half of done is that the mod runs with the level:
 
-- `python scripts/offline_check.py` plays every level file through `halls.lua` against mocked engine objects (`scripts/offline_mock.lua`, `offline_scenario.lua`): build, hand-made layout if there is one, opening lines, every room, a hunt, a refuge, the hall, the last room, loop 2, and the installed `main.lua` loading the active level. Needs `pip install lupa`. It finds mistakes in the mod's Lua and in level files. It says nothing about what the real engine does.
+- `python scripts/offline_check.py` plays every level file through `halls.lua` against mocked engine objects (`scripts/offline_mock.lua`, `offline_scenario.lua`): build, hand-made layout if there is one, opening lines, every room, three more walks through every room without the player being moved (O14), no hunger or stamina of the mod's own (O15), the dead-end passage closing without moving anybody (O16), a hunt, a refuge, the hall, the last room, loop 2, and the installed `main.lua` loading the active level. Needs `pip install lupa`. It finds mistakes in the mod's Lua and in level files. It says nothing about what the real engine does.
 - A run in the game. **Still to do** for the wiki level.
 
 ## Where the map departs from the wiki
@@ -105,7 +105,7 @@ Say these plainly when asked; do not paper over them.
 - The wiki's refuge during Flickering is a corridor section. In the map it is a room with a bed, marked by a green lamp that stays lit.
 - The wiki's Flickering cannot be predicted. The map's comes every two to three minutes and each time a part is taken.
 - Arrival is by the game's Level 0 elevator stopping early, not by noclipping.
-- Controls hints ("F9 rests and tries the door") and the tape, valve, fuse and key puzzle are the mod's own and cite rules, not the wiki.
+- Controls hints ("F9 tries the door") and the tape, valve, fuse and key puzzle are the mod's own and cite rules, not the wiki.
 
 ## What a level file can switch on in the mod
 
@@ -117,6 +117,16 @@ In `mod/CustomBackroomsMap/Scripts/halls.lua`. A level that sets none of these p
 - `rules.creeper = "crate"`: the thing that creeps closer is a crate instead of a chair.
 - `rules.exitPipes`: more pipes and wall dials the further into the exit hall.
 - `level.editor` (from `<level>.editor.lua`, attached by `main.lua`): handwork from the Unreal editor. `pieces`, `lights`, `texts` are added; generated pieces whose key is in `remove` are hidden.
+
+## Sanity and stamina are the game's
+
+Since 0.3.0 the mod keeps no hunger or stamina of its own. Asked for by the owner on 2026-11-17: "use the games built in sanity and stamina, so we can use food correctly", and no more being moved back to the first room.
+
+- Gone from `halls.lua`: the cost per room, the HUD numbers, the warnings, passing out and waking in the first room, F9 on food and beds, and the guess at when food was eaten. Gone from level files: `rules.hungerStart/staminaStart/moveHunger/moveStamina`, the numbers on food and beds, and the lines `wake`, `collapse`, `hungry`, `tired`, `eat`, `restQuiet`, `restLoud`. `python generator/update_level.py levels/<id>.json` takes these out of an older level without changing its wording.
+- Food and drink are the game's pickups (`GAME_ITEMS` in `halls.lua`). The mod places them and then leaves them alone. Where the game item cannot be placed, no stand-in is built.
+- Beds are furniture. On a level with `rules.refuge` a room with a bed is a refuge; nothing is done on the bed itself.
+- The mod moves a player in five places only: out of the elevator onto the floor at the start, each stretch of the long hall (that is how the hall stays long), arriving in the last room, starting the next loop, and being put back after falling out of the floor. The dead-end passage used to carry the player back into the room; now it closes like the first room's doorway does, behind the player's back (`update_fake`). Do not add a trick that moves the player.
+- What is known about the game's side comes from names in the game's executable, not from watching it: a `BETSanityComponent` on the survivor (`SanityComponent`), attributes `Sanity`, `MaxSanity`, `SanityDepletionRate`, `Stamina`, `MaxStamina`, `StaminaRegenRate`, the tags `Survivor.Attribute.Sanity.PauseDepletion`, `Survivor.Downed.Sanity`, `Survivor.Death.Sanity`, `Ontology.Item.Consumable.Sanity` and `Ontology.Item.Consumable.Stamina`, and `GetStamina()` / `GetMaxStamina()` on the pawn. So sanity very likely drains over time and items give it back. **Not checked in the game:** how fast sanity drains on this floor, whether the lights-out hunt changes it, and which item gives what. The mod reads and writes none of it. If a refuge should ever pause the drain, the `PauseDepletion` tag is where to look, and it needs a run in the game first.
 
 ## Unreal editor round trip
 

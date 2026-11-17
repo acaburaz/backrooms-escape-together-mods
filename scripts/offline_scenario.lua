@@ -115,6 +115,70 @@ for _, room in ipairs(level.rooms) do
 end
 check("O4", #silent == 0, "Every room shows its description when entered", table.concat(silent, ", "))
 
+-- 4b. Walking the rooms over and over never moves the player anywhere: the mod has no hunger or
+-- tiredness of its own to pass out from. Sanity and stamina are the game's.
+local function moved_from(lx, ly)
+    local gg, at = G(), M.pawn:K2_GetActorLocation()
+    if math.abs(at.X - (gg.O.x + lx)) > 1 or math.abs(at.Y - (gg.O.y + ly)) > 1 then
+        return string.format("put at %d %d, found at %d %d", lx, ly, at.X - gg.O.x, at.Y - gg.O.y)
+    end
+    return nil
+end
+local carried = {}
+for round = 1, 3 do
+    for _, room in ipairs(level.rooms) do
+        local lx, ly = room.x * 800 + 400, room.y * 800 + 400
+        put(lx, ly)
+        ticks(2)
+        local where = moved_from(lx, ly)
+        if where ~= nil then
+            carried[#carried + 1] = "round " .. round .. " " .. room.id .. ": " .. where
+        end
+    end
+end
+check("O14", #carried == 0, "Walking through every room three times over never moves the player", table.concat(carried, "; "))
+g = G()
+check("O15", g.hunger == nil and g.stamina == nil and not seen("HUNGER") and not seen("STAMINA"),
+    "The mod keeps and shows no hunger or stamina of its own",
+    "hunger " .. tostring(g.hunger) .. ", stamina " .. tostring(g.stamina) .. (seen("HUNGER") and ", HUNGER on screen" or ""))
+
+-- 4c. The dead-end passage: walking to its end moves nobody. It closes once the player is back out and
+-- looking the other way, and says so when the player looks again.
+local fake = g.fake
+local fakeNote = {}
+local endX = -700
+put(endX, fake.yc)
+ticks(3)
+if G().fake.state ~= "seen" then
+    fakeNote[#fakeNote + 1] = "reaching the end left the passage '" .. tostring(G().fake.state) .. "'"
+end
+local carriedOut = moved_from(endX, fake.yc)
+if carriedOut ~= nil then
+    fakeNote[#fakeNote + 1] = "the player was moved: " .. carriedOut
+end
+local roomX, roomY = fake.room.x * 800 + 400, fake.room.y * 800 + 400
+M.yaw = 180.0
+put(roomX, roomY)
+ticks(2)
+if G().fake.state ~= "seen" then
+    fakeNote[#fakeNote + 1] = "it closed while the player was looking at it"
+end
+M.yaw = 0.0
+ticks(2)
+if G().fake.state ~= "sealed" then
+    fakeNote[#fakeNote + 1] = "it did not close behind the player's back ('" .. tostring(G().fake.state) .. "')"
+end
+M.yaw = 180.0
+local told = wait_for(line("noDoor", "There was never a door there"), 40)
+if not told or G().fake.state ~= "gone" then
+    fakeNote[#fakeNote + 1] = "looking again did not bring the line"
+end
+if moved_from(roomX, roomY) ~= nil then
+    fakeNote[#fakeNote + 1] = "the player was moved out of the room"
+end
+M.yaw = 0.0
+check("O16", #fakeNote == 0, "The dead-end passage closes behind the player's back and moves nobody", table.concat(fakeNote, "; "))
+
 -- 5. The hunt: lights go out with the level's line, and a room with a bed is a refuge where the file says so.
 g = G()
 local start = g.rooms[level.start]

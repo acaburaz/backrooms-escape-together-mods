@@ -38,8 +38,6 @@ const needles = [
   "WBP_CreateGameOnboarding",
   "W_Lobby",
   "ClientMessage",
-  "hunger",
-  "stamina",
   "120",
   "the_yellow_static",
   "BP_SkinStealer",
@@ -55,6 +53,13 @@ const needles = [
 const absent = needles.filter((needle) => !lua.includes(needle));
 if (absent.length) {
   console.error(`mod is missing ${absent.join(", ")}`);
+  process.exit(1);
+}
+// Sanity and stamina are the game's. The mod keeps none of its own, and nothing in it sends a player
+// back to the first room for running out of them.
+const gone = ["G.hunger", "G.stamina", "moveHunger", "hungerStart", "collapse()", "HUNGER"].filter((needle) => lua.includes(needle));
+if (gone.length) {
+  console.error(`mod still has its own hunger or stamina: ${gone.join(", ")}`);
   process.exit(1);
 }
 console.log("mod contract passed");

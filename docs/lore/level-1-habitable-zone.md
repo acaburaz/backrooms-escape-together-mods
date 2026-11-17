@@ -287,17 +287,17 @@ Where the map follows the game or the mod instead of the wiki, a line cites one 
 
 - **M1.** The players arrive in the elevator of Level 0. It stops early and its doors open onto this level.
 - **M2.** The level is sixteen rooms joined by open doorways. One room is behind locked doors that open for whoever carries the small key.
-- **M3.** Hunger and stamina are shared by the group. Entering a room costs some of both, less on a second visit. Eating or drinking gives hunger back. Resting on a bed gives stamina back. At zero the group passes out and wakes in the first room with a little over half of both.
+- **M3.** The mod has no hunger or tiredness of its own and never makes a player pass out. Sanity and stamina are the game's own and the mod does not touch them. Food and drink are the game's items: they lie on small tables, are picked up with the game's own key and are used from the game's inventory.
 - **M4.** Three parts lie on small tables in the rooms: a tape, a valve and a fuse. The exit door opens when the group carries all three and somebody tries the door.
 - **M5.** Every two to three minutes, and each time a part is taken, the lights go out for a while. While they are out the entity comes for the nearest player. Its grab kills and the level starts again.
 - **M6.** A room with a bed is a refuge. A green lamp beside its doorway stays lit when the lights go out. While every player is inside a refuge during lights-out, the entity is no longer drawn toward them.
 - **M7.** Behind the exit door is a long hall. Looking back there undoes the distance walked. Pipes run along it and dials sit on its walls, more of them the further in. After walking far enough without looking back, light shows at the end.
 - **M8.** At the end of the hall is a small room with one sliding door and a sign over it. When the door opens and the players walk through, the same level starts again as the next loop.
-- **M9.** There are two beds. One is quiet. The other is noisy and resting on it draws the entity one room closer.
+- **M9.** There are two beds: a cot, and a bare mattress with a lamp buzzing over it. They are furniture. Nothing is done on them and nobody rests or sleeps; what they are for is M6.
 - **M10.** With the lights on the entity only wanders and watches. It does not attack.
-- **M11.** Green EXIT signs hang over some doorways. They cannot be trusted. One doorway leads into a dead end and is gone afterwards.
+- **M11.** Green EXIT signs hang over some doorways. They cannot be trusted. One doorway leads into a dead end; after the players have walked back out of it, it is plain wall the next time they look.
 - **M12.** A wooden crate stands in one room and creeps closer while nobody looks at it.
-- **M13.** F9 uses what is in front of the player: rest on a bed, try the exit door. Items are picked up with the game's own key and eaten from the inventory.
+- **M13.** F9 tries the exit door. Items are picked up with the game's own key and used from the game's inventory.
 - **M14.** This map is not safe. Whatever the wiki's difficulty class says, the entity kills here.
 - **M15.** A room is a square box with flat walls, a flat floor and ceiling, one ceiling lamp and open doorways. What else stands in it is its theme's props, small tables with items, and a bed if it has one.
 
@@ -315,10 +315,10 @@ Written by OpenAI (gpt-5.5) on 2026-11-17.
 | Look `garden_floor` | props: growth, debris | F06, F37, F39 |
 | Room `r0_0` (grey_halls) | You stand in bland grey concrete. A square pillar cuts one corner, and debris lies in small dry piles. | F01, F03, F37, M15 |
 | Room `r1_0` (grey_halls) | A Granola Square sits on a small table. Bland walls press close around a square pillar and scattered debris. | F01, F37, F45, M3, M15 |
-| Room `r2_0` (grey_halls) | A Quiet Cot rests on the floor. The grey walls are stained, and debris gathers beside one concrete pillar. | F01, F03, F37, M3, M6, M9, M15 |
+| Room `r2_0` (grey_halls) | A Quiet Cot rests on the floor. The grey walls are stained, and debris gathers beside one concrete pillar. | F01, F03, F37, M6, M9, M15 |
 | Room `r3_0` (warehouse_pipes) | A VHS Tape sits on a small table. Pipes run under the ceiling above a metal shelf stacked with crates. | F07, F40, M4, M15 |
 | Room `r0_1` (warehouse_pipes) | A metal shelf of crates leans in one corner. Pipes cross the ceiling and carry a dull clang. | F07, F40, M15 |
-| Room `r1_1` (stagnant_crates) | A Buzzing Mattress lies on the floor. Wooden crates sit near a stagnant puddle that smells unclean. | F08, F10, M3, M6, M9, M15 |
+| Room `r1_1` (stagnant_crates) | A Buzzing Mattress lies on the floor. Wooden crates sit near a stagnant puddle that smells unclean. | F08, F10, M6, M9, M15 |
 | Room `r2_1` (warehouse_pipes) | A Canned Soup sits on a small table. A metal shelf holds crates below two ceiling pipes. | F07, F40, F45, M3, M15 |
 | Room `r3_1` (gild_sector) | A Glass Fuse sits on a small table. Warmer concrete surrounds a square pillar and stacked crates. | F04, F10, M4, M15 |
 | Room `r0_2` (stagnant_crates) | Wooden crates crowd one corner. A dark puddle spreads a plastic stagnant smell. | F08, F10, M15 |
@@ -340,14 +340,7 @@ Written by OpenAI (gpt-5.5) on 2026-11-17.
 | Line `refuge` | You crowd by the bed here. The Flickering passes over this room. | F54, M6 |
 | Line `monsterNear` | {name} watches near you with sunken white eyes. | F20, M10 |
 | Line `tipDeath` | Flickering wakes hunters. Stay together near a bed. | F17, F22, M5, M6 |
-| Line `wake` | You wake by the elevator with hunger and stamina half filled. | M3 |
-| Line `collapse` | Your body gives out. | M3 |
-| Line `hungry` | Food is scarce. Eat or drink before you fall. | F45, M3 |
-| Line `tired` | Stuffy air drags at you. Find a bed and rest. | F09, M3 |
-| Line `eat` | You take in {item}. Down here, resources decide how long you last. | F16, F31, F32, M3 |
 | Line `keyTaken` | You take the {item}. Locked doors may answer it. | M2 |
-| Line `restQuiet` | The Quiet Cot takes your weight. The halls stay distant. | F01, M3, M9 |
-| Line `restLoud` | The Buzzing Mattress groans. Something comes one room closer. | F17, M9 |
 | Line `doorShut` | The UTILITY door stays shut. Missing: {parts}. | M4 |
 | Line `doorOpen` | The parts fit. The way to the Utility Halls opens. | F26, F27, M4, M7 |
 | Line `exitSign` | UTILITY | F26 |

@@ -28,8 +28,8 @@ if not g then out("STATE none") return end
 local have = {} for k, v in pairs(g.have) do if v then have[#have+1] = k end end table.sort(have)
 local used = {} for _, it in ipairs(g.items) do if it.taken then used[#used+1] = it.id end end
 local errs = 0 for _ in pairs(g.errs) do errs = errs + 1 end
-out(string.format("STATE %.0f %.0f %.0f room=%s zone=%s hunger=%d stamina=%d have=%s used=%s exit=%s passes=%d white=%s epi=%s loop=%d seal=%s fake=%s chair=%s god=%s errs=%d sub=%s",
-  g.px, g.py, g.pz, tostring(g.roomId), g.zone, g.hunger, g.stamina, table.concat(have, ","), table.concat(used, ","),
+out(string.format("STATE %.0f %.0f %.0f room=%s zone=%s have=%s used=%s exit=%s passes=%d white=%s epi=%s loop=%d seal=%s fake=%s chair=%s god=%s errs=%d sub=%s",
+  g.px, g.py, g.pz, tostring(g.roomId), g.zone, table.concat(have, ","), table.concat(used, ","),
   g.exit.state, g.hall.passes, tostring(g.hall.white), g.epi.state, g.loop, g.seal.state, g.fake.state,
   tostring(g.chair and g.chair.moved), tostring(g.god), errs, tostring(g.sub and g.sub.text)))
 for k in pairs(g.errs) do out("ERR " .. k) end

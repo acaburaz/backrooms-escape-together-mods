@@ -11,16 +11,11 @@ return {
     z = 400
   },
   rules = {
-    hungerStart = 100,
-    staminaStart = 100,
-    moveHunger = 15,
-    moveStamina = 15,
     refuge = true,
     creeper = "crate",
     exitPipes = true
   },
   coop = {
-    sharedVitals = true,
     minPlayers = 1,
     maxPlayers = 6,
     rules = "Three parts lie on small tables in the rooms: a tape, a valve and a fuse. The exit door opens when the group carries all three and somebody tries the door."
@@ -283,8 +278,7 @@ return {
       food = {
         {
           id = "granola",
-          name = "Granola Square",
-          hunger = 40
+          name = "Granola Square"
         }
       },
       rest = {}
@@ -296,9 +290,7 @@ return {
       rest = {
         {
           id = "quiet_cot",
-          name = "Quiet Cot",
-          stamina = 50,
-          callsMonster = false
+          name = "Quiet Cot"
         }
       }
     },
@@ -327,9 +319,7 @@ return {
       rest = {
         {
           id = "buzzing_mattress",
-          name = "Buzzing Mattress",
-          stamina = 50,
-          callsMonster = true
+          name = "Buzzing Mattress"
         }
       }
     },
@@ -339,8 +329,7 @@ return {
       food = {
         {
           id = "canned_soup",
-          name = "Canned Soup",
-          hunger = 40
+          name = "Canned Soup"
         }
       },
       rest = {}
@@ -369,8 +358,7 @@ return {
       food = {
         {
           id = "almond_water",
-          name = "Almond Water",
-          hunger = 40
+          name = "Almond Water"
         }
       },
       rest = {}
@@ -447,10 +435,6 @@ return {
         to = "r2_0"
       },
       {
-        action = "rest",
-        id = "quiet_cot"
-      },
-      {
         action = "move",
         to = "r3_0"
       },
@@ -469,10 +453,6 @@ return {
       {
         action = "move",
         to = "r2_1"
-      },
-      {
-        action = "eat",
-        id = "canned_soup"
       },
       {
         action = "move",
@@ -699,14 +679,7 @@ return {
     refuge = "You crowd by the bed here. The Flickering passes over this room.",
     monsterNear = "{name} watches near you with sunken white eyes.",
     tipDeath = "Flickering wakes hunters. Stay together near a bed.",
-    wake = "You wake by the elevator with hunger and stamina half filled.",
-    collapse = "Your body gives out.",
-    hungry = "Food is scarce. Eat or drink before you fall.",
-    tired = "Stuffy air drags at you. Find a bed and rest.",
-    eat = "You take in {item}. Down here, resources decide how long you last.",
     keyTaken = "You take the {item}. Locked doors may answer it.",
-    restQuiet = "The Quiet Cot takes your weight. The halls stay distant.",
-    restLoud = "The Buzzing Mattress groans. Something comes one room closer.",
     doorShut = "The UTILITY door stays shut. Missing: {parts}.",
     doorOpen = "The parts fit. The way to the Utility Halls opens.",
     exitSign = "UTILITY",

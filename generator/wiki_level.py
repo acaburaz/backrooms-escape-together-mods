@@ -48,17 +48,17 @@ MONSTER_CLASS = "/Game/Entities/SkinStealer/BP_SkinStealer.BP_SkinStealer_C"
 MECHANICS = {
     "M1": "The players arrive in the elevator of Level 0. It stops early and its doors open onto this level.",
     "M2": "The level is sixteen rooms joined by open doorways. One room is behind locked doors that open for whoever carries the small key.",
-    "M3": "Hunger and stamina are shared by the group. Entering a room costs some of both, less on a second visit. Eating or drinking gives hunger back. Resting on a bed gives stamina back. At zero the group passes out and wakes in the first room with a little over half of both.",
+    "M3": "The mod has no hunger or tiredness of its own and never makes a player pass out. Sanity and stamina are the game's own and the mod does not touch them. Food and drink are the game's items: they lie on small tables, are picked up with the game's own key and are used from the game's inventory.",
     "M4": "Three parts lie on small tables in the rooms: a tape, a valve and a fuse. The exit door opens when the group carries all three and somebody tries the door.",
     "M5": "Every two to three minutes, and each time a part is taken, the lights go out for a while. While they are out the entity comes for the nearest player. Its grab kills and the level starts again.",
     "M6": "A room with a bed is a refuge. A green lamp beside its doorway stays lit when the lights go out. While every player is inside a refuge during lights-out, the entity is no longer drawn toward them.",
     "M7": "Behind the exit door is a long hall. Looking back there undoes the distance walked. Pipes run along it and dials sit on its walls, more of them the further in. After walking far enough without looking back, light shows at the end.",
     "M8": "At the end of the hall is a small room with one sliding door and a sign over it. When the door opens and the players walk through, the same level starts again as the next loop.",
-    "M9": "There are two beds. One is quiet. The other is noisy and resting on it draws the entity one room closer.",
+    "M9": "There are two beds: a cot, and a bare mattress with a lamp buzzing over it. They are furniture. Nothing is done on them and nobody rests or sleeps; what they are for is M6.",
     "M10": "With the lights on the entity only wanders and watches. It does not attack.",
-    "M11": "Green EXIT signs hang over some doorways. They cannot be trusted. One doorway leads into a dead end and is gone afterwards.",
+    "M11": "Green EXIT signs hang over some doorways. They cannot be trusted. One doorway leads into a dead end; after the players have walked back out of it, it is plain wall the next time they look.",
     "M12": "A wooden crate stands in one room and creeps closer while nobody looks at it.",
-    "M13": "F9 uses what is in front of the player: rest on a bed, try the exit door. Items are picked up with the game's own key and eaten from the inventory.",
+    "M13": "F9 tries the exit door. Items are picked up with the game's own key and used from the game's inventory.",
     "M14": "This map is not safe. Whatever the wiki's difficulty class says, the entity kills here.",
     "M15": "A room is a square box with flat walls, a flat floor and ceiling, one ceiling lamp and open doorways. What else stands in it is its theme's props, small tables with items, and a bed if it has one.",
 }
@@ -72,8 +72,8 @@ ITEMS = {
     "valve": "part for the exit door: the game's green valve wheel",
     "fuse": "part for the exit door: the game's glass fuse",
     "small_key": "the game's small key, opens the locked room",
-    "quiet_cot": "bed, quiet: a cot (a green cot with a pillow)",
-    "buzzing_mattress": "bed, noisy: a bare mattress on the floor with a lamp buzzing over it",
+    "quiet_cot": "bed: a cot (a green cot with a pillow)",
+    "buzzing_mattress": "bed: a bare mattress on the floor with a lamp buzzing over it",
 }
 
 # The game's own pickups keep plain names, so the prompt on screen and the thing picked up agree.
@@ -276,7 +276,10 @@ def design_request(level: dict, facts: list[dict], wiki_title: str, entity_title
         "and doorways, so do not spend words on them; give each room one detail of its own to notice. Things to pick up stand "
         "on small tables, only beds are on the floor. Dials are in the hall behind the exit door, never in a room.\n"
         "9. The map is dangerous (M14). Do not call the place safe. The sign over the exit door must not read EXIT, because "
-        "untrustworthy EXIT signs already hang in the level (M11); take a word from the facts about the way out."
+        "untrustworthy EXIT signs already hang in the level (M11); take a word from the facts about the way out.\n"
+        "10. The mod has no hunger, no tiredness and no passing out (M3), and nobody rests or sleeps on a bed (M9). Do not "
+        "write about being hungry, starving, resting, sleeping or passing out, and do not say what food or drink does: "
+        "that is the game's business."
     )
     user = {
         "wikiLevelPage": wiki_title,

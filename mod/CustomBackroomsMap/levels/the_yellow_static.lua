@@ -10,14 +10,8 @@ return {
     y = 120000,
     z = 400
   },
-  rules = {
-    hungerStart = 100,
-    staminaStart = 100,
-    moveHunger = 15,
-    moveStamina = 15
-  },
+  rules = {},
   coop = {
-    sharedVitals = true,
     minPlayers = 1,
     maxPlayers = 6,
     rules = "Anyone can carry a part. The exit opens only when the group has the tape, the valve, and the fuse."
@@ -280,8 +274,7 @@ return {
       food = {
         {
           id = "granola",
-          name = "Granola square",
-          hunger = 40
+          name = "Granola square"
         }
       },
       rest = {}
@@ -293,9 +286,7 @@ return {
       rest = {
         {
           id = "quiet_cot",
-          name = "Quiet cot",
-          stamina = 50,
-          callsMonster = false
+          name = "Quiet cot"
         }
       }
     },
@@ -324,9 +315,7 @@ return {
       rest = {
         {
           id = "buzzing_mattress",
-          name = "Buzzing mattress",
-          stamina = 50,
-          callsMonster = true
+          name = "Buzzing mattress"
         }
       }
     },
@@ -336,8 +325,7 @@ return {
       food = {
         {
           id = "canned_soup",
-          name = "Canned soup",
-          hunger = 40
+          name = "Canned soup"
         }
       },
       rest = {}
@@ -366,8 +354,7 @@ return {
       food = {
         {
           id = "almond_water",
-          name = "Almond water",
-          hunger = 40
+          name = "Almond water"
         }
       },
       rest = {}
@@ -430,7 +417,7 @@ return {
         "r3_1"
       },
       damage = 20,
-      visualClass = "/Game/Entities/SkinStealer/BP_SkinStealer.BP_SkinStealer_C"
+      visualClass = "/Game/Entities/Smiler/BP_SmilerCharacter.BP_SmilerCharacter_C"
     }
   },
   solution = {
@@ -442,10 +429,6 @@ return {
       {
         action = "move",
         to = "r2_0"
-      },
-      {
-        action = "rest",
-        id = "quiet_cot"
       },
       {
         action = "move",
@@ -466,10 +449,6 @@ return {
       {
         action = "move",
         to = "r2_1"
-      },
-      {
-        action = "eat",
-        id = "canned_soup"
       },
       {
         action = "move",

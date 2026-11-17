@@ -102,50 +102,6 @@
         "phenomenon"
       ]
     },
-    "wake": {
-      "kind": "mechanic",
-      "max": 90,
-      "when": "The group passed out from hunger or exhaustion and wakes in the room where the elevator let them out, with a little over half of hunger and stamina."
-    },
-    "collapse": {
-      "kind": "mechanic",
-      "max": 50,
-      "when": "Hunger or stamina just reached zero. The player is about to pass out."
-    },
-    "hungry": {
-      "kind": "both",
-      "max": 70,
-      "when": "Hunger is low. Tells the player to find something to eat.",
-      "says": [
-        "food",
-        "eat",
-        "drink"
-      ]
-    },
-    "tired": {
-      "kind": "both",
-      "max": 70,
-      "when": "Stamina is low. Tells the player to find somewhere to rest.",
-      "says": [
-        "bed",
-        "cot",
-        "mattress",
-        "rest",
-        "sleep"
-      ]
-    },
-    "eat": {
-      "kind": "lore",
-      "max": 80,
-      "vars": [
-        "item"
-      ],
-      "when": "The player ate or drank {item} (lower-case item name).",
-      "needs": [
-        "resource",
-        "object"
-      ]
-    },
     "keyTaken": {
       "kind": "mechanic",
       "max": 60,
@@ -153,16 +109,6 @@
         "item"
       ],
       "when": "The player picked up the small key. {item} is its lower-case name."
-    },
-    "restQuiet": {
-      "kind": "both",
-      "max": 80,
-      "when": "The player rests on the quiet bed. Nothing happens."
-    },
-    "restLoud": {
-      "kind": "both",
-      "max": 90,
-      "when": "The player rests on the noisy bed. The noise draws the entity one room closer."
     },
     "doorShut": {
       "kind": "mechanic",
@@ -234,7 +180,7 @@
     "noDoor": {
       "kind": "lore",
       "max": 60,
-      "when": "A trick: a doorway with an EXIT sign led into a dead-end passage, and is gone when the player comes back out."
+      "when": "A trick: a doorway with an EXIT sign led into a dead-end passage. After the player walked back out it is plain wall, and this line shows when the player looks at it again."
     },
     "hallSign": {
       "kind": "mechanic",

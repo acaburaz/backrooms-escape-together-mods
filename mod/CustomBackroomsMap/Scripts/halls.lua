@@ -983,9 +983,8 @@ local function make_game_item(item, slot)
     item.base = small_table(item.lx, item.ly)
     item.real = true
     item.def = def:GetFName():ToString()
-    if item.kind == "food" then
-        G.food[item.def] = { hunger = item.data.hunger or 40, name = item.name }
-    else
+    -- Food is left to the game: it is eaten from the game's inventory and acts on the game's sanity and stamina.
+    if item.kind ~= "food" then
         G.partDef[item.id] = item.def
         item_glow(item, GLOWS[item.id] or { 1, 1, 1 })
     end
@@ -1005,6 +1004,11 @@ local function build_items(room)
             local make = PROPS[data.id]
             if make_game_item(item, #G.items + 1) then
                 G.realItems = G.realItems + 1
+            elseif kind == "food" then
+                -- Only the game's own food does anything, so no stand-in that cannot be eaten is put out.
+                -- The table still stands where the food would lie.
+                item.base = small_table(item.lx, item.ly)
+                item.taken = true
             elseif make ~= nil then
                 make(item, item.lx, item.ly)
             else
@@ -1626,27 +1630,6 @@ local function refresh_exit_lamps()
     end
 end
 
-local function collapse()
-    if G.busy then
-        return
-    end
-    G.busy = true
-    fade(0, 1, 0.8, { 0, 0, 0 }, true)
-    after(1.2, function()
-        local lx, ly = room_center(G.rooms[G.level.start])
-        teleport(lx, ly, 0)
-        G.hunger, G.stamina = 60, 60
-        G.stalkPause = os.clock() + 30
-        if valid(G.monster) and G.monsterHome ~= nil then
-            monster_to(room_center(G.monsterHome))
-        end
-        G.roomId = G.level.start
-        fade(1, 0, 2.0, { 0, 0, 0 }, false)
-        say(L("wake", "You wake up where the elevator was. It is still not there."), 5)
-        G.busy = false
-    end)
-end
-
 -- Taking a part wakes the dark for a few seconds.
 local function take_part_scare(item)
     sfx("knock")
@@ -1776,7 +1759,7 @@ local function update_items(t)
     end
     G.itemTick = t
     G.carried = scan_carried()
-    local floor, lying = scan_floor()
+    local _, lying = scan_floor()
     -- The game recycles pickup actors, so an item counts as taken once nothing of its kind lies on its spot.
     for _, item in ipairs(G.items) do
         if item.def ~= nil and not item.taken then
@@ -1801,22 +1784,6 @@ local function update_items(t)
                 elseif item.kind == "keys" then
                     say(L("keyTaken", "A {item}. It is warm.", { item = item.name:lower() }), 4)
                 end
-            end
-        end
-    end
-    -- Food that left every pocket without landing on the floor was eaten.
-    for def, food in pairs(G.food) do
-        local total = (G.carried[def] or 0) + (floor[def] or 0)
-        local known = G.foodTotal[def]
-        if known == nil or total >= known then
-            G.foodTotal[def], G.foodLow[def] = total, nil
-        else
-            G.foodLow[def] = (G.foodLow[def] or 0) + 1
-            if G.foodLow[def] >= 2 then
-                G.hunger = math.min(100, G.hunger + food.hunger * (known - total))
-                G.foodTotal[def], G.foodLow[def] = total, nil
-                say(L("eat", "You eat the {item}. It tastes like the hum sounds.", { item = food.name:lower() }), 4)
-                H.broadcast()
             end
         end
     end
@@ -2089,7 +2056,8 @@ end
 local function target_now()
     local best, bestD = nil, USE_RANGE
     for _, item in ipairs(G.items) do
-        local usable = not item.taken and not item.real
+        -- Only a stand-in for a part or the key is taken with F9. Beds are furniture and food is the game's.
+        local usable = not item.taken and not item.real and (item.kind == "puzzle" or item.kind == "keys")
         if usable then
             local d = dist_to(item.lx, item.ly)
             if d < bestD then
@@ -2118,13 +2086,7 @@ local function prompt_for(target)
     if target.kind == "exit" then
         return "[F9] TRY THE " .. L("exitSign", "MAINTENANCE") .. " DOOR"
     end
-    local item = target.item
-    if item.kind == "food" then
-        return "[F9] EAT: " .. item.name:upper()
-    elseif item.kind == "rest" then
-        return "[F9] REST: " .. item.name:upper()
-    end
-    return "[F9] TAKE: " .. item.name:upper()
+    return "[F9] TAKE: " .. target.item.name:upper()
 end
 
 local function take_item(item)
@@ -2132,30 +2094,7 @@ local function take_item(item)
     for _, prop in ipairs(item.props) do
         destroy(prop)
     end
-    if item.kind == "food" then
-        G.consumed[item.id] = true
-        G.hunger = math.min(100, G.hunger + (item.data.hunger or 40))
-        say(L("eat", "You eat the {item}. It tastes like the hum sounds.", { item = item.name:lower() }), 4)
-    elseif item.kind == "rest" then
-        G.consumed[item.id] = true
-        G.stamina = math.min(100, G.stamina + (item.data.stamina or 50))
-        fade(0, 1, 0.5, { 0, 0, 0 }, true)
-        after(1.1, function()
-            fade(1, 0, 1.2, { 0, 0, 0 }, false)
-        end)
-        if item.data.callsMonster then
-            say(L("restLoud", "The springs sing. Somewhere in the hall, something turns its head."), 5)
-            after(1.0, function()
-                local here = G.rooms[item.room]
-                local n = neighbors(here)[1]
-                if n ~= nil and not G.god then
-                    monster_to(room_center(n.room))
-                end
-            end)
-        else
-            say(L("restQuiet", "You close your eyes. Nothing moves that you can hear."), 4)
-        end
-    elseif item.kind == "puzzle" then
+    if item.kind == "puzzle" then
         G.picked[item.id] = true
         refresh_have()
         take_part_scare(item)
@@ -2228,11 +2167,6 @@ local function enter_room(room, t)
     else
         G.glitch = false
     end
-    if prev ~= nil and G.host and not G.god then
-        local cost = first and G.level.rules.moveHunger or 5
-        G.hunger = math.max(0, G.hunger - cost)
-        G.stamina = math.max(0, G.stamina - (first and G.level.rules.moveStamina or 5))
-    end
     if first and prev ~= nil then
         say(room.description, 5, "room")
     end
@@ -2247,22 +2181,6 @@ local function enter_room(room, t)
         end
     elseif seal.state == "pending" and room.id == G.level.start then
         seal.state = "armed"
-    end
-    if G.hunger <= 0 or G.stamina <= 0 then
-        say(L("collapse", "Your legs stop answering."), 3)
-        collapse()
-    elseif G.hunger <= 30 and not G.warnedHunger then
-        G.warnedHunger = true
-        say(L("hungry", "Your stomach turns. Find something to eat."), 4)
-    elseif G.stamina <= 30 and not G.warnedStamina then
-        G.warnedStamina = true
-        say(L("tired", "You are slowing down. Find somewhere to rest."), 4)
-    end
-    if G.hunger > 45 then
-        G.warnedHunger = false
-    end
-    if G.stamina > 45 then
-        G.warnedStamina = false
     end
     H.broadcast()
 end
@@ -2399,28 +2317,47 @@ local function update_doors()
     end
 end
 
+-- True while no player stands in the dead-end passage or in its doorway.
+local function fake_empty()
+    local empty = true
+    for _, survivor in ipairs(survivors()) do
+        pcall(function()
+            local at = survivor:K2_GetActorLocation()
+            local lx, ly = at.X - G.O.x, at.Y - G.O.y
+            if lx < 60 and lx > -FAKE_LEN - 60 and math.abs(ly - G.fake.yc) <= DOOR_W / 2 + 60
+                and math.abs(at.Z - G.O.z) < 600 then
+                empty = false
+            end
+        end)
+    end
+    return empty
+end
+
+-- The doorway under the EXIT sign leads into a dead end. Nobody is moved: once somebody has walked to the
+-- end and everybody is back out, the doorway closes while the player is not looking at it.
 local function update_fake(t)
     local fake = G.fake
-    if fake.state ~= "open" or G.zone ~= "fake" or G.busy then
+    if G.busy then
         return
     end
-    if G.px < -FAKE_LEN + 260 then
-        fake.state = "closing"
-        G.busy = true
-        sfx("knock")
-        fade(0, 1, 0.25, { 0, 0, 0 }, true)
-        after(0.9, function()
-            local room = fake.room
-            plug(room, "W", nil)
+    if fake.state == "open" then
+        if G.zone == "fake" and G.px < -FAKE_LEN + 260 then
+            fake.state = "seen"
+            sfx("knock")
+        end
+    elseif fake.state == "seen" then
+        if G.zone == "room" and dist_to(0, fake.yc) > 230 and not in_view(0, fake.yc, 120, 0.15) and fake_empty() then
+            plug(fake.room, "W", nil)
             destroy(fake.sign.actor)
             destroy(fake.plate)
-            local cx, cy = room_center(room)
-            teleport(cx, cy, 0)
-            fade(1, 0, 1.4, { 0, 0, 0 }, false)
-            say(L("noDoor", "There was never a door there."), 5)
+            fake.state = "sealed"
+        end
+    elseif fake.state == "sealed" then
+        if dist_to(0, fake.yc) < 760 and in_view(0, fake.yc, 120, 0.75) then
             fake.state = "gone"
-            G.busy = false
-        end)
+            sfx("knock", 0.7)
+            say(L("noDoor", "There was never a door there."), 5)
+        end
     end
 end
 
@@ -2844,7 +2781,7 @@ local function update_hud(t)
         where = L("epiSign", "LEVEL 0")
     end
     local status = G.level.title:upper() .. (G.loop > 1 and ("   LOOP " .. G.loop) or "") .. "\n"
-        .. where .. "   HUNGER " .. math.floor(G.hunger) .. "   STAMINA " .. math.floor(G.stamina) .. "\n"
+        .. where .. "\n"
         .. table.concat(parts, "  ") .. (G.have.small_key and "   KEY" or "")
         .. (G.hunt ~= nil and ("\n" .. L("hudHunt", "LIGHTS OUT")) or "")
         .. (G.god and "\nTEST: GODMODE" or "")
@@ -3031,13 +2968,12 @@ function H.build(origin, opts)
     end
     G = {
         O = origin, level = level, actors = {}, ours = {}, mids = {}, lights = {}, items = {}, signs = {}, doors = {},
-        timers = {}, anims = {}, subs = {}, have = {}, consumed = {}, visited = {}, visitedCount = 0, errs = {},
-        hunger = level.rules.hungerStart, stamina = level.rules.staminaStart, lightK = 1,
+        timers = {}, anims = {}, subs = {}, have = {}, visited = {}, visitedCount = 0, errs = {},
+        lightK = 1,
         loop = opts.loop or 1, god = opts.god == true, host = opts.host ~= false, shadows = opts.shadows ~= false,
         seal = { state = "armed" }, zone = "room", big = "", px = 0, py = 0, pz = 0,
         cam = { x = 0, y = 0, z = 0 }, fwd = { X = 1, Y = 0, Z = 0 },
-        picked = {}, carried = {}, spent = opts.spent or {}, partDef = {}, partIds = {}, food = {}, foodTotal = {},
-        foodLow = {}, realItems = 0,
+        picked = {}, carried = {}, spent = opts.spent or {}, partDef = {}, partIds = {}, realItems = 0,
     }
     if opts.record then
         G.record = {}
@@ -3290,7 +3226,7 @@ function H.broadcast(withBuild)
         end
     end
     table.sort(have)
-    local state = string.format("[CBR] STATE hunger=%d stamina=%d have=%s", math.floor(G.hunger), math.floor(G.stamina), table.concat(have, ","))
+    local state = "[CBR] STATE have=" .. table.concat(have, ",")
     local build = string.format("[CBR] BUILD %.1f %.1f %.1f", G.O.x, G.O.y, G.O.z)
     for _, controller in ipairs(list) do
         pcall(function()
@@ -3309,8 +3245,6 @@ function H.message(text)
             H.enter({ origin = { x = tonumber(x), y = tonumber(y), z = tonumber(z) }, host = false })
         end
     elseif text:find("[CBR] STATE", 1, true) and G ~= nil and not G.host then
-        G.hunger = tonumber(text:match("hunger=(%-?%d+)")) or G.hunger
-        G.stamina = tonumber(text:match("stamina=(%-?%d+)")) or G.stamina
         local have = text:match("have=([^%s]*)") or ""
         for _, id in ipairs(G.partIds) do
             G.have[id] = false
@@ -3331,9 +3265,6 @@ function H.god(on)
     if G ~= nil then
         G.god = on == true
         G.godSet = false
-        if G.god then
-            G.hunger, G.stamina = 100, 100
-        end
     end
 end
 

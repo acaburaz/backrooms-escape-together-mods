@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Build a solvable co-op Backrooms level and optional OpenAI flavor text.
 
-The maze, locks, hunger, stamina, and exit puzzle are decided here.
+The maze, locks, item places and exit puzzle are decided here.
+The mod has no hunger or tiredness of its own: sanity and stamina are the game's,
+and the food put out is the game's own, used from the game's inventory.
 OpenAI is only allowed to rename rooms and objects. The key is read from
 the OPENAI_API_KEY environment variable and is never stored.
 """
@@ -26,14 +28,16 @@ HEIGHT = 4
 START = "r0_0"
 EXIT = "r3_3"
 PUZZLE_IDS = ("vhs", "valve", "fuse")
+# The game's own food and drink, put out as game pickups.
 FOOD_SPECS = (
-    ("almond_water", "Almond water", 40),
-    ("canned_soup", "Canned soup", 40),
-    ("granola", "Granola square", 40),
+    ("almond_water", "Almond water"),
+    ("canned_soup", "Canned soup"),
+    ("granola", "Granola square"),
 )
+# Beds are furniture. On a level with rules.refuge a room with a bed is a refuge.
 REST_SPECS = (
-    ("quiet_cot", "Quiet cot", 50, False),
-    ("buzzing_mattress", "Buzzing mattress", 50, True),
+    ("quiet_cot", "Quiet cot"),
+    ("buzzing_mattress", "Buzzing mattress"),
 )
 THEMES = (
     "yellow_wallpaper",
@@ -126,12 +130,10 @@ def build_topology(rng: random.Random) -> dict:
     for puzzle_id, where in zip(PUZZLE_IDS, puzzle_rooms):
         name, clue = puzzle_names[puzzle_id]
         contents[where]["puzzle"].append({"id": puzzle_id, "name": name, "clue": clue})
-    for (food_id, name, hunger), where in zip(FOOD_SPECS, food_rooms):
-        contents[where]["food"].append({"id": food_id, "name": name, "hunger": hunger})
-    for (rest_id, name, stamina, calls), where in zip(REST_SPECS, rest_rooms):
-        contents[where]["rest"].append(
-            {"id": rest_id, "name": name, "stamina": stamina, "callsMonster": calls}
-        )
+    for (food_id, name), where in zip(FOOD_SPECS, food_rooms):
+        contents[where]["food"].append({"id": food_id, "name": name})
+    for (rest_id, name), where in zip(REST_SPECS, rest_rooms):
+        contents[where]["rest"].append({"id": rest_id, "name": name})
 
     patrol = choose_patrol(rng)
     annotate_items({"rooms": rooms, "contents": contents})
@@ -142,21 +144,15 @@ def build_topology(rng: random.Random) -> dict:
         "briefing": (
             "An office complex that should not fit behind the stairwell. "
             "The carpet is damp, the lamps hum, and every hall looks borrowed from the last one. "
-            "Stay together. Hunger and stamina are shared. "
+            "Stay together. "
             "Find the tape, the valve, and the fuse, then leave through the maintenance door. "
-            "Eat when the group weakens. Rest only when the side hall is empty."
+            "Take the food and water you find on the way."
         ),
         "flavorSource": "local",
         "cellSize": 800,
         "origin": {"x": 120000, "y": 120000, "z": 400},
-        "rules": {
-            "hungerStart": 100,
-            "staminaStart": 100,
-            "moveHunger": 15,
-            "moveStamina": 15,
-        },
+        "rules": {},
         "coop": {
-            "sharedVitals": True,
             "minPlayers": 1,
             "maxPlayers": 6,
             "rules": "Anyone can carry a part. The exit opens only when the group has the tape, the valve, and the fuse.",
@@ -210,14 +206,12 @@ def bit_index(ids: list[str]) -> dict[str, int]:
     return {item_id: index for index, item_id in enumerate(ids)}
 
 
-def collect_indexes(level: dict) -> tuple[dict[str, int], dict[str, int], dict[str, int], dict[str, int]]:
-    keys, notes, foods, rests = [], [], [], []
+def collect_indexes(level: dict) -> tuple[dict[str, int], dict[str, int]]:
+    keys, notes = [], []
     for room_contents in level["contents"].values():
         keys.extend(item["id"] for item in room_contents["keys"])
         notes.extend(item["id"] for item in room_contents["puzzle"])
-        foods.extend(item["id"] for item in room_contents["food"])
-        rests.extend(item["id"] for item in room_contents["rest"])
-    return bit_index(sorted(keys)), bit_index(sorted(notes)), bit_index(sorted(foods)), bit_index(sorted(rests))
+    return bit_index(sorted(keys)), bit_index(sorted(notes))
 
 
 def items_in(level: dict, room: str, kind: str) -> list[dict]:
@@ -240,55 +234,31 @@ def apply_enter(level: dict, room: str, keys: int, notes: int, key_index, note_i
 
 
 def solve(level: dict) -> list[dict] | None:
-    rules = level["rules"]
+    """Shortest way from the start to the exit with every part in hand: which doors need the key first."""
     graph = adjacency(level)
-    key_index, note_index, food_index, rest_index = collect_indexes(level)
+    key_index, note_index = collect_indexes(level)
     required = 0
     for puzzle_id in level["exit"]["requires"]:
+        if puzzle_id not in note_index:
+            return None
         required |= 1 << note_index[puzzle_id]
     start_keys, start_notes, _ = apply_enter(level, level["start"], 0, 0, key_index, note_index)
-    start = (level["start"], start_keys, start_notes, 0, rules["hungerStart"], rules["staminaStart"])
+    start = (level["start"], start_keys, start_notes)
     queue: deque = deque([start])
     parent: dict[tuple, tuple | None] = {start: None}
     action_of: dict[tuple, dict | None] = {start: None}
-    guard = 0
     found = None
     while queue:
-        guard += 1
-        if guard > 2_000_000:
-            return None
         state = queue.popleft()
-        room, keys, notes, consumed, hunger, stamina = state
+        room, keys, notes = state
         if room == level["exit"]["room"] and (notes & required) == required:
             found = state
             break
-        for food in items_in(level, room, "food"):
-            bit = 1 << food_index[food["id"]]
-            if consumed & bit:
-                continue
-            nxt = (room, keys, notes, consumed | bit, min(100, hunger + food["hunger"]), stamina)
-            if nxt not in parent:
-                parent[nxt] = state
-                action_of[nxt] = {"action": "eat", "id": food["id"]}
-                queue.append(nxt)
-        for rest in items_in(level, room, "rest"):
-            bit = 1 << (len(food_index) + rest_index[rest["id"]])
-            if consumed & bit:
-                continue
-            nxt = (room, keys, notes, consumed | bit, hunger, min(100, stamina + rest["stamina"]))
-            if nxt not in parent:
-                parent[nxt] = state
-                action_of[nxt] = {"action": "rest", "id": rest["id"]}
-                queue.append(nxt)
         for other, lock in graph[room]:
-            if lock is not None and (keys & (1 << key_index[lock])) == 0:
-                continue
-            next_hunger = hunger - rules["moveHunger"]
-            next_stamina = stamina - rules["moveStamina"]
-            if next_hunger < 1 or next_stamina < 1:
+            if lock is not None and (lock not in key_index or (keys & (1 << key_index[lock])) == 0):
                 continue
             next_keys, next_notes, taken = apply_enter(level, other, keys, notes, key_index, note_index)
-            nxt = (other, next_keys, next_notes, consumed, next_hunger, next_stamina)
+            nxt = (other, next_keys, next_notes)
             if nxt not in parent:
                 parent[nxt] = state
                 action_of[nxt] = {"action": "move", "to": other, "take": taken}
@@ -299,12 +269,9 @@ def solve(level: dict) -> list[dict] | None:
     cursor = found
     while parent[cursor] is not None:
         act = action_of[cursor]
-        if act["action"] == "move":
-            for item_id in reversed(act["take"]):
-                steps.append({"action": "take", "id": item_id})
-            steps.append({"action": "move", "to": act["to"]})
-        else:
-            steps.append(act)
+        for item_id in reversed(act["take"]):
+            steps.append({"action": "take", "id": item_id})
+        steps.append({"action": "move", "to": act["to"]})
         cursor = parent[cursor]
     steps.reverse()
     steps.append({"action": "exit"})
@@ -487,7 +454,7 @@ def generate(seed: int) -> dict:
     for offset in range(40):
         level = build_topology(random.Random(seed + offset))
         steps = solve(level)
-        if steps and any(step["action"] == "eat" for step in steps) and any(step["action"] == "rest" for step in steps):
+        if steps:
             level["solution"]["steps"] = steps
             level["seed"] = seed + offset
             if not local_flavor_is_safe(level):

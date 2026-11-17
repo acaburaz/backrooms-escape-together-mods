@@ -52,6 +52,9 @@ ITEM_WORDS = {
     "granola": ("granola",),
 }
 REST_WORDS = ("cot", "mattress", "bed")
+# Words for things the mod does not have: its own hunger, resting to recover, passing out.
+NO_SUCH_RULE = (r"\b(hunger|hungry|starv\w*|famished|pass(?:es|ed|ing)? out|black(?:s|ed)? out|"
+                r"sleep\w*|slept|nap|naps|lie down|lies down|rest (?:here|on it|on the|a while|up)|get some rest)\b")
 COMPASS = ("north", "south", "east", "west")
 # The flashlight's effect on the Skin Stealer is untested on this floor, and the wiki's advice about light
 # is about other entities. So no line may tell players what a light does.
@@ -357,9 +360,6 @@ def check(level: dict, sources: dict[str, str] | None = None) -> list[dict]:
     if not steps:
         problems.append("the solver finds no way from the start to the exit")
     else:
-        actions = [step["action"] for step in steps]
-        if "eat" not in actions or "rest" not in actions:
-            problems.append("the shortest way out needs no food or no rest, so they do not matter")
         if steps != level.get("solution", {}).get("steps"):
             problems.append("the stored solution is not the one the solver finds")
     exit_room = next((room for room in level["rooms"] if room["id"] == level["exit"]["room"]), None)
@@ -368,7 +368,16 @@ def check(level: dict, sources: dict[str, str] | None = None) -> list[dict]:
         problems.append("the exit room is not on the east edge, where the mod puts the exit door")
     if not level.get("rules", {}).get("refuge"):
         problems.append("rules.refuge is off, but the lines talk about refuges")
-    add("P1", "Playable: a route from the elevator to the exit exists, and it needs both food and rest", problems)
+    for name in ("hungerStart", "staminaStart", "moveHunger", "moveStamina"):
+        if name in level.get("rules", {}):
+            problems.append(f"rules.{name} is set, but the mod has no hunger or stamina of its own")
+    beds = sum(len(contents["rest"]) for contents in level["contents"].values())
+    food = sum(len(contents["food"]) for contents in level["contents"].values())
+    if beds < 1:
+        problems.append("no room has a bed, so there is no refuge")
+    if food < 1:
+        problems.append("no food or drink is put out for the game's sanity and stamina")
+    add("P1", "Playable: a route from the elevator to the exit exists, with a refuge and the game's food on the floor", problems)
 
     # --- P2: lines give nothing away and say nothing false ---
     problems = []
@@ -386,6 +395,13 @@ def check(level: dict, sources: dict[str, str] | None = None) -> list[dict]:
             continue
         if re.search(r"\b(is|are|stays?|feels?|seems?) safe\b|\bsafe and secure\b", line.lower()) and place != "text.refuge":
             problems.append(f"{place} calls the place safe, and on this map the entity kills")
+    # Sanity and stamina are the game's. The mod has no hunger, no rest and no passing out to talk about.
+    for place, line in all_lines(level):
+        if place.startswith("items.") or place == "monster":
+            continue
+        found = re.search(NO_SUCH_RULE, line.lower())
+        if found:
+            problems.append(f"{place} speaks of {found.group(0)!r}; the mod has no hunger, rest or passing out, and food is the game's")
     if str(level.get("text", {}).get("exitSign", "")).strip().upper() == "EXIT":
         problems.append("text.exitSign is EXIT, the same word as the signs that cannot be trusted")
     for room in level["rooms"]:
@@ -419,7 +435,7 @@ def check(level: dict, sources: dict[str, str] | None = None) -> list[dict]:
         for item in here.values():
             if item["name"].lower() not in low:
                 problems.append(f"rooms.{room['id']} holds the {item['name']} and does not mention it by that name")
-    add("P2", "Honest lines: no room ids or directions, a room only mentions what is in it and what the mod builds, and nothing calls the map safe", problems)
+    add("P2", "Honest lines: no room ids or directions, a room only mentions what is in it and what the mod builds, nothing calls the map safe, and nothing speaks of hunger, rest or passing out", problems)
 
     # --- P3: the mod reads exactly these lines ---
     problems = []
