@@ -21,6 +21,12 @@ local HALL_HALF = 200
 local FAKE_LEN = 900
 local EPI_HALF = 240
 local USE_RANGE = 270
+-- The game's own Level 0 elevator, as measured in the running game (scripts/probes/elevator_parts.lua).
+-- Its door faces +X and the actor's origin lies on the door line. The clear doorway is 131 wide and
+-- 230 high, centred 3.75 to the -Y side of the origin; the car floor is 12 above the origin and the
+-- front of the car 3 in front of it. drop is how far below its start the car stops for our floor
+-- (the real level sends it down 24924).
+local CAR = { doorW = 150, doorH = 236, doorY = -3.75, floorZ = 12, front = 4, drop = 2400 }
 local ZERO = { Pitch = 0, Yaw = 0, Roll = 0 }
 local MONSTER_CLASS = "/Game/Entities/SkinStealer/BP_SkinStealer.BP_SkinStealer_C"
 -- The game hands a monster its jumpscare through this set. One we spawn ourselves starts without it.
@@ -522,6 +528,9 @@ local function side_kind(room, dir)
         if room.id == G.fakeRoom and dir == "W" then
             return "fake"
         end
+        if room.id == G.level.start and dir == "W" then
+            return "car"
+        end
         return "solid"
     end
     local link = G.links[room.id .. "|" .. other.id]
@@ -664,10 +673,51 @@ local function build_epilogue()
     G.epi.glow.k = 0
 end
 
+-- The landing doors of the elevator shaft, shut. They stand in the doorway whenever the game's car is
+-- not behind it.
+local function shut_car_doorway()
+    if G.carDoors ~= nil then
+        return
+    end
+    local room = G.rooms[G.level.start]
+    local mid = CELL / 2
+    G.carDoors = {
+        side_box(room, "W", mid - CAR.doorW / 2, mid - 1, 0, CAR.doorH, STEEL, 2, TH - 2),
+        side_box(room, "W", mid + 1, mid + CAR.doorW / 2, 0, CAR.doorH, STEEL, 2, TH - 2),
+    }
+end
+
+-- The wall the elevator arrives behind: a doorway the size of the car's own, in a steel frame.
+local function build_car_side(room, th)
+    local dir = "W"
+    local g0, g1 = CELL / 2 - CAR.doorW / 2, CELL / 2 + CAR.doorW / 2
+    local thin = { ghost = true, noshadow = true }
+    side_box(room, dir, 0, g0, 0, BAND, th.band)
+    side_box(room, dir, 0, g0, BAND, HEIGHT, th.wall)
+    side_box(room, dir, g1, CELL, 0, BAND, th.band)
+    side_box(room, dir, g1, CELL, BAND, HEIGHT, th.wall)
+    side_box(room, dir, g0, g1, CAR.doorH, HEIGHT, th.wall)
+    side_box(room, dir, 0, g0 - 10, BAND - 3, BAND + 3, th.trim, 0, TH + 1.5, thin)
+    side_box(room, dir, g1 + 10, CELL, BAND - 3, BAND + 3, th.trim, 0, TH + 1.5, thin)
+    side_box(room, dir, 0, g0 - 10, 0, 9, th.trim, 0, TH + 2, thin)
+    side_box(room, dir, g1 + 10, CELL, 0, 9, th.trim, 0, TH + 2, thin)
+    side_box(room, dir, g0 - 10, g0, 0, CAR.doorH + 10, STEEL, 0, TH + 3, { ghost = true })
+    side_box(room, dir, g1, g1 + 10, 0, CAR.doorH + 10, STEEL, 0, TH + 3, { ghost = true })
+    side_box(room, dir, g0, g1, CAR.doorH, CAR.doorH + 10, STEEL, 0, TH + 3, { ghost = true })
+    G.carSide = true
+    if not G.carRide then
+        shut_car_doorway()
+    end
+end
+
 local function build_side(room, dir, th)
     local kind, link, other = side_kind(room, dir)
     local g0, g1 = CELL / 2 - DOOR_W / 2, CELL / 2 + DOOR_W / 2
     local thin = { ghost = true, noshadow = true }
+    if kind == "car" then
+        build_car_side(room, th)
+        return
+    end
     if kind == "solid" then
         side_box(room, dir, 0, CELL, 0, BAND, th.band)
         side_box(room, dir, 0, CELL, BAND, HEIGHT, th.wall)
@@ -1459,11 +1509,78 @@ local function monster_to(lx, ly)
 end
 
 -- Hide whatever the original level put where the generated floor now is.
-local function hide_original()
+local HIDE_CLASSES = { "StaticMeshComponent", "InstancedStaticMeshComponent", "HierarchicalInstancedStaticMeshComponent",
+    "SplineMeshComponent" }
+
+-- Switches off the meshes of the original level, for at most `budget` seconds of work at a time
+-- (all of it when no budget is given). True once every mesh has been dealt with.
+local function hide_step(budget)
+    local h = G.hide
+    if h == nil then
+        return true
+    end
+    local began = os.clock()
+    while h.class <= #h.lists do
+        local list = h.lists[h.class]
+        while h.index <= #list do
+            if budget ~= nil and os.clock() - began > budget then
+                h.spent = h.spent + (os.clock() - began)
+                return false
+            end
+            local component = list[h.index]
+            h.index = h.index + 1
+            -- The game may have thrown a mesh away since the list was made.
+            if valid(component) then
+                local ownerName = ""
+                pcall(function()
+                    local owner = component:GetOwner()
+                    if valid(owner) then
+                        ownerName = owner:GetFullName() or ""
+                    end
+                end)
+                if not G.ours[ownerName] and not ownerName:find("Survivor", 1, true) and not ownerName:find("SkinStealer", 1, true)
+                    and not (h.riding and ownerName:find("BP_Elevator", 1, true)) then
+                    local t0 = os.clock()
+                    local ok = pcall(function()
+                        component:SetHiddenInGame(true, true)
+                        component:SetVisibility(false, true)
+                        -- Collision goes first. The level's chunk manager draws its walls as instanced meshes
+                        -- with up to 20000 copies each, and shrinking one of those while it is still solid
+                        -- makes the game resize every copy's collision: 4.5 s for one mesh, measured. With
+                        -- collision off the same shrink takes 1 ms.
+                        component:SetCollisionEnabled(0)
+                        component:SetWorldScale3D({ X = 0.001, Y = 0.001, Z = 0.001 })
+                    end)
+                    if ok then
+                        h.off = h.off + 1
+                    end
+                    local took = os.clock() - t0
+                    if took > (h.slowest or 0) then
+                        h.slowest, h.slowestName = took, ownerName
+                    end
+                end
+            end
+        end
+        log(h.names[h.class] .. " switched off " .. h.off .. " of " .. #list)
+        h.class, h.index, h.off = h.class + 1, 1, 0
+    end
+    h.spent = h.spent + (os.clock() - began)
+    log(string.format("The original level's meshes took %.1f s to switch off (slowest %.0f ms: %s)", h.spent, (h.slowest or 0) * 1000,
+        tostring(h.slowestName)))
+    G.hide = nil
+    return true
+end
+
+local function hide_original(budget)
     local b = map_bounds()
     local lo, hi = W(b.x0, b.y0, b.z0), W(b.x1, b.y1, b.z1)
     local keep = { "Survivor", "SkinStealer", "Controller", "PlayerCamera", "GameMode", "GameState", "PlayerState",
         "Manager", "Volume", "NavMesh", "Recast", "Navigation", "WorldSettings", "PostProcess", "HUD", "GameSession" }
+    -- The car that brings the players, and the panel inside it, stay as the game made them.
+    local riding = G.arrival ~= nil
+    if riding then
+        keep[#keep + 1] = "BP_Elevator"
+    end
     local hidden, seen = 0, 0
     for _, actor in ipairs(FindAllOf("Actor") or {}) do
         local name = ""
@@ -1501,31 +1618,11 @@ local function hide_original()
     log("Cleared " .. hidden .. " of " .. seen .. " original actors from the floor")
     -- The shaft and the old level are built from large shared meshes whose bounds do not say
     -- where they are drawn, so every mesh that is not ours is switched off as well.
-    for _, className in ipairs({ "StaticMeshComponent", "InstancedStaticMeshComponent",
-        "HierarchicalInstancedStaticMeshComponent", "SplineMeshComponent" }) do
-        local list = FindAllOf(className) or {}
-        local off = 0
-        for _, component in ipairs(list) do
-            local ownerName = ""
-            pcall(function()
-                local owner = component:GetOwner()
-                if valid(owner) then
-                    ownerName = owner:GetFullName() or ""
-                end
-            end)
-            if not G.ours[ownerName] and not ownerName:find("Survivor", 1, true) and not ownerName:find("SkinStealer", 1, true) then
-                local ok = pcall(function()
-                    component:SetHiddenInGame(true, true)
-                    component:SetVisibility(false, true)
-                    component:SetWorldScale3D({ X = 0.001, Y = 0.001, Z = 0.001 })
-                end)
-                if ok then
-                    off = off + 1
-                end
-            end
-        end
-        log(className .. " switched off " .. off .. " of " .. #list)
+    G.hide = { lists = {}, names = HIDE_CLASSES, class = 1, index = 1, off = 0, spent = 0, riding = riding }
+    for index, className in ipairs(HIDE_CLASSES) do
+        G.hide.lists[index] = FindAllOf(className) or {}
     end
+    hide_step(budget)
 end
 H.hide_original = hide_original
 
@@ -2908,6 +3005,17 @@ function H.tick()
         return
     end
     guard("anims", run_anims, t)
+    guard("arrival", H.update_arrival, t)
+    if G ~= mine then
+        return
+    end
+    if G.arrival ~= nil and (G.arrival.state == "riding" or G.arrival.state == "stopped") then
+        -- Still in the car with the doors shut: nothing on the floor runs yet.
+        guard("objectives", update_objectives, t)
+        guard("menu", update_menu_cover, t)
+        guard("hud", update_hud, t)
+        return
+    end
     guard("zone", update_zone, t)
     guard("seal", update_seal, t)
     guard("signs", update_signs, t)
@@ -2974,6 +3082,7 @@ function H.build(origin, opts)
         seal = { state = "armed" }, zone = "room", big = "", px = 0, py = 0, pz = 0,
         cam = { x = 0, y = 0, z = 0 }, fwd = { X = 1, Y = 0, Z = 0 },
         picked = {}, carried = {}, spent = opts.spent or {}, partDef = {}, partIds = {}, realItems = 0,
+        carRide = opts.car == true,
     }
     if opts.record then
         G.record = {}
@@ -3069,8 +3178,10 @@ function H.build(origin, opts)
     end
     build_ceiling_grid()
     build_signs()
-    local sx, sy = room_center(G.rooms[level.start])
-    box(sx - 130, sy - 130, 0, sx + 130, sy + 130, 1, { 0.10, 0.08, 0.04 }, { ghost = true })
+    if not G.carRide then
+        local sx, sy = room_center(G.rooms[level.start])
+        box(sx - 130, sy - 130, 0, sx + 130, sy + 130, 1, { 0.10, 0.08, 0.04 }, { ghost = true })
+    end
     local chairRoom = G.rooms[(level.solution.steps[9] and level.solution.steps[9].to) or "r2_1"] or G.rooms["r2_1"]
     if chairRoom ~= nil then
         local cx, cy = room_center(chairRoom)
@@ -3100,6 +3211,10 @@ function H.build(origin, opts)
 end
 
 local function stop_elevator_ride()
+    -- A car that is bringing the players to our floor is left alone.
+    if G ~= nil and G.arrival ~= nil and not G.arrival.failed then
+        return
+    end
     for _, player in ipairs(FindAllOf("LevelSequencePlayer") or {}) do
         pcall(function()
             player:Stop()
@@ -3152,7 +3267,140 @@ local function show_player()
     end)
 end
 
--- Called while the elevator is still moving: the floor is built around the car.
+-- The floor's clocks start when the players can walk onto it, not when it was built.
+local function begin_floor(t)
+    G.builtAt, G.startTime, G.roomSince = t, t, t
+    G.nextHunt = t + 100 + math.random() * 40
+    G.zone = "room"
+    say(L("intro2", "The doors opened anyway."), 3.5)
+    say(L("goal", "Find the tape, the valve and the fuse. Leave through the maintenance door."), 6)
+    if G.realItems > 0 then
+        say("Pick things up and use them from your inventory like anywhere else. F9 tries the door.", 6)
+        say(L("huntWarn", "When the lights go out it hunts, and it kills. Keep your flashlight on it."), 6)
+    else
+        say("F9 takes what is in front of you and tries the door. Stay together.", 5)
+    end
+    after(7.5, function()
+        G.big = G.level.title:upper()
+    end)
+    after(11.5, function()
+        G.big = ""
+    end)
+end
+
+local function find_car()
+    local found = nil
+    for _, actor in ipairs(FindAllOf("BP_ElevatorFinal_C") or {}) do
+        if valid(actor) then
+            found = actor
+        end
+    end
+    return found
+end
+
+-- Where the game's elevator is and where it has been told to go. Nil until the game has queued the ride.
+local function car_plan()
+    local car = find_car()
+    if car == nil then
+        return nil
+    end
+    local plan = nil
+    pcall(function()
+        local move = car.ElevatorMovement
+        if not valid(move) then
+            return
+        end
+        local data = move.CurrentElevatorMoveData
+        if not (data.MoveDuration > 0) or data.MoveDistance == 0 then
+            return
+        end
+        local at = car:K2_GetActorLocation()
+        plan = { car = car, move = move, x = at.X, y = at.Y, startZ = data.MoveStartHeight, distance = data.MoveDistance }
+    end)
+    return plan
+end
+
+-- True when the start room has an outside wall on the side the car's door opens to.
+local function car_side_free(level, start)
+    local rows = 0
+    for _, room in ipairs(level.rooms) do
+        rows = math.max(rows, room.y + 1)
+        if room.x == start.x - 1 and room.y == start.y then
+            return false
+        end
+    end
+    return start.id ~= "r0_" .. (rows - 1)
+end
+
+-- The elevator did not come. Shut the shaft doors and put the players in the start room, as a last resort.
+local function give_up_on_car(t, why)
+    log("The elevator did not arrive (" .. why .. "). Starting in the room instead.")
+    G.arrival.state, G.arrival.failed = "done", true
+    shut_car_doorway()
+    stop_elevator_ride()
+    step_onto_floor()
+    show_player()
+    say(L("intro1", "The elevator stopped between floors."), 3.5)
+    begin_floor(t)
+end
+
+-- Follows the game's elevator down to our floor. The game moves the car, brakes it, opens the doors
+-- and starts the match itself; this only watches, and speaks when it stops and when the doors open.
+local function update_arrival(t)
+    local a = G.arrival
+    if a == nil or a.state == "done" then
+        return
+    end
+    if not valid(a.car) then
+        a.car = find_car()
+    end
+    local z, doors = nil, 0
+    if a.car ~= nil then
+        pcall(function()
+            z = a.car:K2_GetActorLocation().Z
+            doors = a.car.CurrentDoorAlpha
+        end)
+    end
+    a.z, a.doors = z, doors
+    if G.hide ~= nil then
+        -- The rest of the old level goes while the car is still shut, a little each tick.
+        hide_step(a.state == "riding" and 0.006 or nil)
+    end
+    if a.state == "riding" then
+        if z ~= nil and math.abs(z - a.stopZ) < 3 then
+            a.near = a.near or t
+            -- The car dips a little past the floor and settles, the way the real one does.
+            if t - a.near > 0.8 then
+                a.state, a.stoppedAt = "stopped", t
+                -- Whatever the game loaded during the ride goes too, before the doors open.
+                hide_step(nil)
+                hide_original()
+                log(string.format("The elevator stopped at our floor (car %.1f, floor %.1f)", z, G.O.z))
+                say(L("intro1", "The elevator stopped between floors."), 3.5)
+            end
+        elseif t - a.since > 75 then
+            give_up_on_car(t, "still moving after 75 seconds")
+        end
+    elseif a.state == "stopped" then
+        if type(doors) == "number" and doors > 0.02 then
+            a.state = "open"
+            log("The elevator doors are opening")
+            begin_floor(t)
+        elseif t - a.stoppedAt > 25 then
+            give_up_on_car(t, "its doors stayed shut")
+        end
+    elseif a.state == "open" then
+        if (type(doors) == "number" and doors >= 0.99) or G.px > 40 then
+            a.state = "done"
+            log("The elevator doors are open")
+        end
+    end
+end
+
+H.update_arrival = update_arrival
+
+-- Called once the game has queued the elevator ride (or, without a car, while the ride is under way).
+-- With a car: the floor is built where the car will stop, and the car is told to stop there.
 function H.enter(opts)
     opts = opts or {}
     local level = ctx.level()
@@ -3160,26 +3408,76 @@ function H.enter(opts)
     if level == nil or not valid(controller) then
         return false
     end
+    local start = nil
+    for _, room in ipairs(level.rooms) do
+        if room.id == level.start then
+            start = room
+        end
+    end
     local origin = opts.origin
-    if origin == nil then
-        local cam = nil
+    local plan = nil
+    if (origin == nil or opts.car) and car_side_free(level, start) then
+        plan = car_plan()
+        if plan ~= nil and origin == nil then
+            origin = {
+                x = plan.x + CAR.front - start.x * CELL,
+                y = plan.y + CAR.doorY - (start.y * CELL + CELL / 2),
+                z = plan.startZ - CAR.drop + CAR.floorZ,
+            }
+        end
+    end
+    if plan ~= nil then
+        opts.car = true
+        local stopZ = origin.z - CAR.floorZ
+        local wanted = stopZ - plan.startZ
         pcall(function()
-            cam = controller.PlayerCameraManager:GetCameraLocation()
+            plan.car:SetActorTickEnabled(true)
         end)
-        if cam == nil or cam.X == nil then
+        local set = nil
+        pcall(function()
+            plan.move.CurrentElevatorMoveData.MoveDistance = wanted
+            set = plan.move.CurrentElevatorMoveData.MoveDistance
+        end)
+        if set == nil or math.abs(set - wanted) > 0.5 then
+            log("Could not tell the elevator where to stop (distance reads " .. tostring(set) .. ")")
+            plan = nil
+            opts.car = nil
+            if opts.origin == nil then
+                origin = nil
+            end
+        else
+            log(string.format("The elevator was going %.0f; it now goes %.0f and stops at z %.1f", plan.distance, wanted, stopZ))
+        end
+    end
+    if plan == nil and opts.car and origin ~= nil then
+        -- Another player's floor, told to us before our own copy of the car knew its ride.
+        opts.car = nil
+    end
+    if plan == nil then
+        if origin == nil and not opts.cut then
             return false
         end
-        local start = nil
-        for _, room in ipairs(level.rooms) do
-            if room.id == level.start then
-                start = room
+        if origin == nil then
+            local cam = nil
+            pcall(function()
+                cam = controller.PlayerCameraManager:GetCameraLocation()
+            end)
+            if cam == nil or cam.X == nil then
+                return false
             end
+            origin = { x = cam.X - (start.x * CELL + CELL / 2), y = cam.Y - (start.y * CELL + CELL / 2), z = cam.Z - 150 }
         end
-        origin = { x = cam.X - (start.x * CELL + CELL / 2), y = cam.Y - (start.y * CELL + CELL / 2), z = cam.Z - 150 }
+        stop_elevator_ride()
     end
-    stop_elevator_ride()
     if not H.build(origin, opts) then
         return false
+    end
+    if plan ~= nil then
+        G.arrival = { state = "riding", car = plan.car, stopZ = origin.z - CAR.floorZ, since = os.clock() }
+        G.zone = "car"
+        hide_original(0.006)
+        H.broadcast(true)
+        return true
     end
     step_onto_floor()
     show_player()
@@ -3195,10 +3493,10 @@ function H.enter(opts)
     say(L("intro2", "The doors opened anyway."), 3.5)
     say(L("goal", "Find the tape, the valve and the fuse. Leave through the maintenance door."), 6)
     if G.realItems > 0 then
-        say("Pick things up and eat from your inventory like anywhere else. F9 rests and tries the door.", 6)
+        say("Pick things up and use them from your inventory like anywhere else. F9 tries the door.", 6)
         say(L("huntWarn", "When the lights go out it hunts, and it kills. Keep your flashlight on it."), 6)
     else
-        say("F9 uses what is in front of you. Eat. Rest. Stay together.", 5)
+        say("F9 takes what is in front of you and tries the door. Stay together.", 5)
     end
     after(7.5, function()
         G.big = G.level.title:upper()
@@ -3227,7 +3525,8 @@ function H.broadcast(withBuild)
     end
     table.sort(have)
     local state = "[CBR] STATE have=" .. table.concat(have, ",")
-    local build = string.format("[CBR] BUILD %.1f %.1f %.1f", G.O.x, G.O.y, G.O.z)
+    -- Three decimals: the doorway sits a quarter of a unit off the grid, and both floors must be the same.
+    local build = string.format("[CBR] BUILD %.3f %.3f %.3f", G.O.x, G.O.y, G.O.z) .. (G.arrival ~= nil and " car" or "")
     for _, controller in ipairs(list) do
         pcall(function()
             if withBuild then
@@ -3242,7 +3541,8 @@ function H.message(text)
     if text:find("[CBR] BUILD", 1, true) then
         local x, y, z = text:match("BUILD (%-?[%d%.]+) (%-?[%d%.]+) (%-?[%d%.]+)")
         if x ~= nil and (G == nil or not G.built) then
-            H.enter({ origin = { x = tonumber(x), y = tonumber(y), z = tonumber(z) }, host = false })
+            H.enter({ origin = { x = tonumber(x), y = tonumber(y), z = tonumber(z) }, host = false,
+                car = text:find(" car", 1, true) ~= nil, cut = true })
         end
     elseif text:find("[CBR] STATE", 1, true) and G ~= nil and not G.host then
         local have = text:match("have=([^%s]*)") or ""

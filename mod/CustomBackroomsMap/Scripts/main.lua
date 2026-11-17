@@ -1,6 +1,6 @@
 -- CBR_MAP_PICKER_V1
 -- Starting Level 0 from the journey list builds the generated floor around the elevator.
--- F9 (key 120) uses food, rest, parts and the exit. No travel or cheat commands.
+-- F9 (key 120) tries the exit door. No travel or cheat commands.
 -- The floor itself lives in halls.lua so it can be reloaded while the game runs.
 
 local MOD = "CustomBackroomsMap"
@@ -145,10 +145,21 @@ local function first_survivor()
     return nil
 end
 
--- The intro rides an elevator. Once it has been moving for three seconds, stop it at our floor.
+-- The intro rides the game's elevator. As soon as the game has queued that ride, the floor is built
+-- where the car will stop and the car is told to stop there; the game does the rest. Only when that
+-- cannot be done is the ride cut short the old way, once the car has been moving for three seconds.
 local function watch_elevator(id)
     if id ~= S.watch or S.entered or H == nil then
         return
+    end
+    local ok, result = pcall(H.enter, { god = flag("godmode") })
+    if ok and result then
+        S.entered = true
+        log("Elevator rides to " .. tostring(S.level and S.level.pickerLabel))
+        return
+    end
+    if not ok then
+        log("Could not build yet: " .. tostring(result))
     end
     local z = nil
     local pawn = first_survivor()
@@ -158,7 +169,7 @@ local function watch_elevator(id)
         end)
     end
     if z == nil then
-        later(500, function()
+        later(200, function()
             watch_elevator(id)
         end)
         return
@@ -174,7 +185,7 @@ local function watch_elevator(id)
     end
     local movingFor = S.movingSince and (now - S.movingSince) or 0
     if movingFor > 3 or now - S.watchBegan > 25 then
-        local ok, result = pcall(H.enter, { god = flag("godmode") })
+        ok, result = pcall(H.enter, { god = flag("godmode"), cut = true })
         if ok and result then
             S.entered = true
             log("Elevator stops at " .. tostring(S.level and S.level.pickerLabel))
@@ -182,7 +193,7 @@ local function watch_elevator(id)
         end
         log("Could not build yet: " .. tostring(result))
     end
-    later(500, function()
+    later(200, function()
         watch_elevator(id)
     end)
 end
@@ -196,7 +207,7 @@ local function on_level0()
         pcall(H.forget)
     end
     local id = S.watch
-    later(500, function()
+    later(200, function()
         watch_elevator(id)
     end)
 end

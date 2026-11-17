@@ -17,10 +17,14 @@ local function seen(text)
 end
 
 local level = assert(load(levelSrc, levelName, "t"))()
-local H = assert(load(hallsSrc, "halls.lua", "t"))({
-    log = function(text) R.logs[#R.logs + 1] = tostring(text) end,
-    level = function() return level end,
-})
+-- A copy of the mod with its own floor. The run uses one; the last checks start a few more.
+local function mod_for(levelTable)
+    return assert(load(hallsSrc, "halls.lua", "t"))({
+        log = function(text) R.logs[#R.logs + 1] = tostring(text) end,
+        level = function() return levelTable end,
+    })
+end
+local H = mod_for(level)
 local text = level.text or {}
 local function line(key, fallback)
     local value = text[key]
@@ -35,6 +39,7 @@ local function ticks(seconds, each)
     local stopAt = M.clock + seconds
     while M.clock < stopAt do
         M.clock = M.clock + 0.05
+        M.step_car()
         H.tick()
         if each ~= nil and each() then
             return true
@@ -59,14 +64,209 @@ local function wait_for(shown, seconds)
     return ticks(seconds, function() return seen(shown) end)
 end
 
--- 1. Entry: the floor builds around the player.
-local entered = H.enter({})
+-- What was measured on the game's own elevator (AGENTS.md, "The elevator"): the car floor is 12 above
+-- the car's origin, the clear doorway is 131 wide and 230 high and sits 3.75 to one side of the origin,
+-- and the door plane is just in front of the origin.
+local CAR_FLOOR, CAR_DOOR_Y, CAR_DOOR_W, CAR_DOOR_H, FLOOR_DROP = 12, -3.75, 131, 230, 2400
+
+local function called(object, method, test)
+    for index, call in ipairs(M.watch[object] or {}) do
+        if call.name == method and (test == nil or test(call.args)) then
+            return index
+        end
+    end
+    return nil
+end
+
+-- What the mod must never do to the car that brings the players.
+local function car_harm(car)
+    local harm = {}
+    if called(car, "SetActorTickEnabled", function(args) return args[1] == false end) then
+        harm[#harm + 1] = "its tick was switched off"
+    end
+    if called(car, "SetActorHiddenInGame", function(args) return args[1] == true end) then
+        harm[#harm + 1] = "it was hidden"
+    end
+    if called(car, "SetActorEnableCollision", function(args) return args[1] == false end) then
+        harm[#harm + 1] = "its collision was switched off"
+    end
+    for _, method in ipairs({ "SetActorScale3D", "K2_SetActorLocation", "K2_DestroyActor", "QueueElevatorMovement",
+        "StartElevatorMovement", "QueueElevatorDoorMovement", "MoveElevatorDoors" }) do
+        if called(car, method) then
+            harm[#harm + 1] = method .. " was called on it"
+        end
+    end
+    return harm
+end
+
+local function start_room()
+    for _, room in ipairs(level.rooms) do
+        if room.id == level.start then
+            return room
+        end
+    end
+end
+
+-- 0. Before the game has queued the elevator's ride there is nothing to line the floor up with.
+local early = H.enter({})
+check("O17", early == false and G() == nil, "Nothing is built before the game has queued the elevator's ride",
+    "H.enter returned " .. tostring(early))
+
+-- 1. Entry: the floor builds where the game's elevator is told to stop.
+local car = M.add_car()
+local moveData = car.ElevatorMovement.CurrentElevatorMoveData
+local movesAtStart = M.pawnMoves
+local entered = H.enter({ record = true })
 local g = G()
 check("O1", entered == true and g ~= nil and g.built == true, "The floor builds from this level file",
     entered == true and (#g.actors .. " pieces") or ("H.enter returned " .. tostring(entered) .. "; " .. tostring(R.logs[#R.logs])))
 if not (entered == true and g ~= nil) then
     R.failures = M.failures
     return R
+end
+
+-- 1b. The ride is the game's own, only shorter, and the floor meets the car where it stops.
+do
+    local notes = {}
+    local startRoom = start_room()
+    local stopZ = moveData.MoveStartHeight + moveData.MoveDistance
+    if moveData.MoveDistance ~= -FLOOR_DROP then
+        notes[#notes + 1] = "the ride is " .. tostring(moveData.MoveDistance) .. " long, not " .. -FLOOR_DROP
+    end
+    if moveData.MoveDuration ~= 27.0 then
+        notes[#notes + 1] = "the ride's duration was changed to " .. tostring(moveData.MoveDuration)
+    end
+    if g.arrival == nil or g.arrival.state ~= "riding" or math.abs(g.arrival.stopZ - stopZ) > 0.01 then
+        notes[#notes + 1] = "the mod is not waiting for the car at z " .. stopZ
+    end
+    if math.abs(g.O.z - (stopZ + CAR_FLOOR)) > 0.01 then
+        notes[#notes + 1] = string.format("the floor is at z %.2f, the car floor will be at %.2f", g.O.z, stopZ + CAR_FLOOR)
+    end
+    local carAt = car:K2_GetActorLocation()
+    local wallX = g.O.x + startRoom.x * 800
+    if wallX < carAt.X or wallX - carAt.X > 10 then
+        notes[#notes + 1] = string.format("the wall's outer face is %.1f in front of the car's origin", wallX - carAt.X)
+    end
+    local doorY = startRoom.y * 800 + 400
+    if math.abs((g.O.y + doorY) - (carAt.Y + CAR_DOOR_Y)) > 0.01 then
+        notes[#notes + 1] = string.format("the doorway is centred %.2f off the car's doors", (g.O.y + doorY) - (carAt.Y + CAR_DOOR_Y))
+    end
+    -- Nothing solid may stand in the opening the car's doors leave: no wall, no landing doors, no mat.
+    local x0, x1 = startRoom.x * 800 - 1, startRoom.x * 800 + 40
+    for _, piece in ipairs(g.record or {}) do
+        if piece.type == "piece" and not piece.ghost then
+            local at, size = piece.at, piece.size
+            if at[1] + size[1] / 2 > x0 and at[1] - size[1] / 2 < x1
+                and at[2] + size[2] / 2 > doorY - CAR_DOOR_W / 2 and at[2] - size[2] / 2 < doorY + CAR_DOOR_W / 2
+                and at[3] + size[3] / 2 > 1 and at[3] - size[3] / 2 < CAR_DOOR_H - 1 then
+                notes[#notes + 1] = "in the doorway: " .. piece.key
+            end
+        end
+    end
+    if g.carDoors ~= nil then
+        notes[#notes + 1] = "the landing doors are shut in front of the car"
+    end
+    check("O18", #notes == 0,
+        "The game's ride is shortened to stop at the floor; the floor is level with the car floor and its doorway is open in front of the car's doors",
+        #notes == 0 and string.format("ride %d over %d s, floor z %.1f", moveData.MoveDistance, moveData.MoveDuration, g.O.z)
+            or table.concat(notes, "; "))
+end
+
+-- 1c. The ride. The mod only watches: it says nothing and runs nothing on the floor until the car has
+-- stopped, and starts the floor when the game opens the doors.
+do
+    local notes = {}
+    local function note(text)
+        for _, have in ipairs(notes) do
+            if have == text then
+                return
+            end
+        end
+        notes[#notes + 1] = text
+    end
+    local intro1, intro2 = line("intro1", "The elevator stopped between floors"), line("intro2", "The doors opened anyway")
+    local rodeFrom, stoppedAt, openAt, sawState = M.clock, nil, nil, {}
+    local huntAtBuild = G().nextHunt
+    ticks(60, function()
+        local gg = G()
+        local a = gg.arrival
+        sawState[a.state] = true
+        if a.state == "riding" then
+            -- main.lua asks for this whenever the game makes a new elevator object. It must not touch
+            -- a car that is on its way to the floor.
+            H.stop_elevator_ride()
+            if seen(intro1) or seen(intro2) then
+                note("an opening line showed while the car was still moving")
+            end
+            if gg.zone ~= "car" or gg.hunt ~= nil or gg.nextHunt ~= huntAtBuild then
+                note("the floor was already running during the ride")
+            end
+        elseif a.state == "stopped" then
+            stoppedAt = stoppedAt or M.clock
+            if seen(intro2) then
+                note("the doors line showed before the doors moved")
+            end
+            if gg.zone ~= "car" or gg.nextHunt ~= huntAtBuild then
+                note("the floor started before the doors moved")
+            end
+        elseif a.state == "open" or a.state == "done" then
+            openAt = openAt or M.clock
+        end
+        return a.state == "done"
+    end)
+    local gg = G()
+    local stopZ = moveData.MoveStartHeight + moveData.MoveDistance
+    if not (sawState.riding and sawState.stopped and sawState.open and gg.arrival.state == "done") then
+        note("the arrival ended as '" .. tostring(gg.arrival.state) .. "'")
+    end
+    if gg.arrival.failed then
+        note("the mod gave up on the car")
+    end
+    if math.abs(car:K2_GetActorLocation().Z - stopZ) > 0.01 or car.CurrentDoorAlpha < 0.99 then
+        note("the car is not at the floor with its doors open")
+    end
+    if not wait_for(intro1, 10) or not wait_for(intro2, 20) then
+        note("the opening lines did not follow the stop and the doors")
+    end
+    if openAt ~= nil and (gg.builtAt ~= openAt or gg.nextHunt == huntAtBuild) then
+        note("the floor's clocks did not start when the doors opened")
+    end
+    check("O19", #notes == 0, "During the ride the floor waits and nothing is said; the mod speaks when the car stops and starts the floor when its doors open",
+        #notes == 0 and string.format("stopped after %.1f s, doors after %.1f s", stoppedAt - rodeFrom, openAt - rodeFrom) or table.concat(notes, "; "))
+
+    -- 1d. Hands off: the game carries the player and works the car.
+    local harm = car_harm(car)
+    if M.pawnMoves ~= movesAtStart then
+        harm[#harm + 1] = "a player was moved " .. (M.pawnMoves - movesAtStart) .. " times"
+    end
+    if called(M.carMesh, "SetHiddenInGame") or called(M.carMesh, "SetVisibility")
+        or called(M.carMesh, "SetWorldScale3D") or called(M.carMesh, "SetCollisionEnabled") then
+        harm[#harm + 1] = "the car's mesh was switched off"
+    end
+    if gg.carDoors ~= nil then
+        harm[#harm + 1] = "landing doors were put in front of the open car"
+    end
+    local hidden, solidOff, shrunk = called(M.oldMesh, "SetHiddenInGame"), called(M.oldMesh, "SetCollisionEnabled"),
+        called(M.oldMesh, "SetWorldScale3D")
+    if not (hidden and solidOff and shrunk) then
+        harm[#harm + 1] = "the old level's mesh was not switched off"
+    elseif solidOff > shrunk then
+        harm[#harm + 1] = "the old level's mesh was shrunk while still solid (that froze the game for seconds)"
+    end
+    if not called(M.oldActor, "SetActorHiddenInGame", function(args) return args[1] == true end) then
+        harm[#harm + 1] = "the old level's actor on the floor was not hidden"
+    end
+    check("O20", #harm == 0,
+        "The mod moves no player and leaves the car alone: not hidden, not stopped, not made untouchable; only the old level is switched off, collision first",
+        table.concat(harm, "; "))
+
+    -- The player walks out of the car into the first room.
+    M.pawnInCar = false
+    local startRoom = start_room()
+    put(startRoom.x * 800 + 400, startRoom.y * 800 + 400)
+    ticks(1)
+    check("O21", G().zone == "room" and G().roomId == level.start, "Walking out of the car puts the player in the first room",
+        "zone " .. tostring(G().zone) .. ", room " .. tostring(G().roomId))
 end
 
 -- 2. Looks: every room gets its theme, and themes the file brings are the ones used.
@@ -138,9 +338,11 @@ for round = 1, 3 do
 end
 check("O14", #carried == 0, "Walking through every room three times over never moves the player", table.concat(carried, "; "))
 g = G()
-check("O15", g.hunger == nil and g.stamina == nil and not seen("HUNGER") and not seen("STAMINA"),
-    "The mod keeps and shows no hunger or stamina of its own",
-    "hunger " .. tostring(g.hunger) .. ", stamina " .. tostring(g.stamina) .. (seen("HUNGER") and ", HUNGER on screen" or ""))
+check("O15", g.hunger == nil and g.stamina == nil and not seen("HUNGER") and not seen("STAMINA")
+    and not seen("F9 rests") and not seen("Eat. Rest."),
+    "The mod keeps and shows no hunger or stamina of its own, and tells nobody to eat or rest with F9",
+    "hunger " .. tostring(g.hunger) .. ", stamina " .. tostring(g.stamina) .. (seen("HUNGER") and ", HUNGER on screen" or "")
+        .. ((seen("F9 rests") or seen("Eat. Rest.")) and ", an opening line still says F9 rests" or ""))
 
 -- 4c. The dead-end passage: walking to its end moves nobody. It closes once the player is back out and
 -- looking the other way, and says so when the player looks again.
@@ -253,7 +455,98 @@ for _, key in ipairs({ "hallEnter", "epi1", "epiSign", "loop" }) do
 end
 check("O10", #last == 0, "The hall, the last room and the loop speak the level file's lines", table.concat(last, ", "))
 
--- 7. Nothing in the mod's own Lua failed along the way.
+-- 7. When the car cannot bring the players, the old way in still works: landing doors shut, players
+-- put in the first room. Each case gets a copy of the mod of its own.
+do
+    local function in_start_room(mod)
+        local gg = mod.state()
+        local room, at = start_room(), M.pawn:K2_GetActorLocation()
+        return gg ~= nil and math.abs(at.X - (gg.O.x + room.x * 800 + 400)) < 1 and math.abs(at.Y - (gg.O.y + room.y * 800 + 400)) < 1
+    end
+    local function run(mod, seconds, done)
+        local stopAt = M.clock + seconds
+        while M.clock < stopAt do
+            M.clock = M.clock + 0.05
+            M.step_car()
+            mod.tick()
+            if done() then
+                return true
+            end
+        end
+        return false
+    end
+    local notes = {}
+
+    -- No elevator in the world at all.
+    M.remove_car()
+    local none = mod_for(level)
+    if none.enter({}) ~= false then
+        notes[#notes + 1] = "without a car the floor was built before the fallback asked for it"
+    end
+    M.pawn:K2_SetActorLocation({ X = 5000, Y = 5000, Z = 300 })
+    if none.enter({ cut = true }) ~= true or none.state().arrival ~= nil or none.state().carDoors == nil or not in_start_room(none) then
+        notes[#notes + 1] = "without a car: the players were not put in the first room behind shut landing doors"
+    end
+
+    -- A car that stops halfway, and a car whose doors stay shut.
+    for _, case in ipairs({ { "stuck", 80 }, { "jam", 70 } }) do
+        M.add_car({ [case[1]] = true })
+        local mod = mod_for(level)
+        local ok = mod.enter({}) == true
+        local gaveUp = ok and run(mod, case[2], function()
+            return mod.state().arrival.failed == true
+        end)
+        -- From here the player stands where the mod put them, not in the car.
+        M.pawnInCar = false
+        run(mod, 1, function() return false end)
+        if not (ok and gaveUp and mod.state().carDoors ~= nil and in_start_room(mod) and mod.state().zone == "room") then
+            notes[#notes + 1] = "a car that is " .. case[1] .. ": the mod did not give up and start in the room ("
+                .. tostring(ok and mod.state().arrival.state) .. ")"
+        end
+        M.remove_car()
+    end
+
+    -- A first room with another room where the car would stand.
+    local other = nil
+    for _, room in ipairs(level.rooms) do
+        if room.x > 0 and room.id ~= level.exit.room then
+            other = other or room
+        end
+    end
+    if other ~= nil then
+        local moved = setmetatable({ start = other.id }, { __index = level })
+        local blockedCar = M.add_car()
+        local data = blockedCar.ElevatorMovement.CurrentElevatorMoveData
+        local mod = mod_for(moved)
+        local waited = mod.enter({})
+        local built = mod.enter({ cut = true })
+        if waited ~= false or built ~= true or data.MoveDistance ~= -24924.0 or mod.state().arrival ~= nil then
+            notes[#notes + 1] = "a first room with no free wall for the car: the ride was changed or the floor did not use the old way in"
+        end
+        M.remove_car()
+    end
+    check("O22", #notes == 0,
+        "With no car, a car that never arrives, doors that stay shut, or no free wall for the car, the players start in the first room behind shut landing doors",
+        table.concat(notes, "; "))
+
+    -- Co-op: another player's copy of the mod is told where the host's floor is and that the car goes there.
+    local clientCar = M.add_car()
+    local data = clientCar.ElevatorMovement.CurrentElevatorMoveData
+    local client = mod_for(level)
+    local host = G()
+    local before = M.pawnMoves
+    client.message(string.format("[CBR] BUILD %.3f %.3f %.3f car", host.O.x, host.O.y, host.O.z))
+    local cg = client.state()
+    local same = cg ~= nil and cg.built == true and cg.host == false and cg.O.x == host.O.x and cg.O.y == host.O.y and cg.O.z == host.O.z
+    local rides = same and cg.arrival ~= nil and cg.arrival.state == "riding" and data.MoveDistance == -FLOOR_DROP
+        and M.pawnMoves == before and #car_harm(clientCar) == 0
+    check("O23", same and rides, "A second player's mod builds the host's floor at the same place and lets its own car ride there",
+        not same and "the floor was not built where the host said" or (not rides and ("arrival " .. tostring(cg.arrival and cg.arrival.state)
+            .. ", ride " .. tostring(data.MoveDistance) .. ", moved " .. (M.pawnMoves - before)) or ""))
+    M.remove_car()
+end
+
+-- 8. Nothing in the mod's own Lua failed along the way.
 local tickErrors = {}
 for _, entry in ipairs(R.logs) do
     if entry:find("Tick error", 1, true) or entry:find("failed", 1, true) then

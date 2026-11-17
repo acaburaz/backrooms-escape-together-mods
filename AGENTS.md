@@ -5,7 +5,8 @@ What this is, how to install and play: `README.md`. This file says where the dat
 ## State on 2026-11-17
 
 - Active level: **Level 1 - "Habitable Zone"** (`levels/level_1_habitable_zone.json`), written by OpenAI (`gpt-5.5`) from 62 quoted wiki facts. It passes all 13 definition-of-done checks and the offline checks.
-- **Not yet run in the game:** version 0.3.0 (see "Sanity and stamina" below), and hand-made layouts. The wiki level was entered in the game once for two minutes on 0.2.0 (the floor built and the elevator stopped; `UE4SS.log`), which is when the owner reported being moved and asked for the mod's own hunger and tiredness to go. Its looks, props, refuge rule, crate and hall dials have not been looked at in the game by an agent. The older level `the_yellow_static` was played in the game before `halls.lua` got these additions.
+- **Run in the game on 0.4.0, alone:** the elevator arrival, six times (see "The elevator" below), and the first steps into the first room. Nothing further into the floor.
+- **Not yet run in the game:** the rest of version 0.3.0 (see "Sanity and stamina" below), co-op, and hand-made layouts. The wiki level was entered in the game once for two minutes on 0.2.0 (the floor built and the elevator stopped; `UE4SS.log`), which is when the owner reported being moved and asked for the mod's own hunger and tiredness to go. Its looks, props, refuge rule, crate and hall dials have not been looked at in the game by an agent. The older level `the_yellow_static` was played in the game before `halls.lua` got these additions.
 - **Not yet run in a real Unreal editor:** `unreal/cbr_unreal.py`. It passes against `scripts/fake_unreal.py`, which was written from Epic's Python API reference.
 - Only wiki page `level-1` has been through the generator.
 
@@ -92,8 +93,8 @@ What the checks do not judge: whether a cited fact really fits its line. They ch
 
 The second half of done is that the mod runs with the level:
 
-- `python scripts/offline_check.py` plays every level file through `halls.lua` against mocked engine objects (`scripts/offline_mock.lua`, `offline_scenario.lua`): build, hand-made layout if there is one, opening lines, every room, three more walks through every room without the player being moved (O14), no hunger or stamina of the mod's own (O15), the dead-end passage closing without moving anybody (O16), a hunt, a refuge, the hall, the last room, loop 2, and the installed `main.lua` loading the active level. Needs `pip install lupa`. It finds mistakes in the mod's Lua and in level files. It says nothing about what the real engine does.
-- A run in the game. **Still to do** for the wiki level.
+- `python scripts/offline_check.py` plays every level file through `halls.lua` against mocked engine objects (`scripts/offline_mock.lua`, `offline_scenario.lua`): nothing built before the ride is queued (O17), the ride shortened and the floor lined up with the car (O18), the ride itself with the floor waiting until the doors open (O19), the car and the player left alone and the old level switched off collision first (O20), walking out (O21), build, hand-made layout if there is one, opening lines, every room, three more walks through every room without the player being moved (O14), no hunger or stamina of the mod's own (O15), the dead-end passage closing without moving anybody (O16), a hunt, a refuge, the hall, the last room, loop 2, the ways in without the car (O22), a second player's copy of the mod (O23), and the installed `main.lua` loading the active level. The mock's elevator (`M.add_car` in `offline_mock.lua`) moves and opens the way the game's was measured to. Needs `pip install lupa`. It finds mistakes in the mod's Lua and in level files. It says nothing about what the real engine does.
+- A run in the game. **Still to do** for the wiki level beyond the arrival.
 
 ## Where the map departs from the wiki
 
@@ -104,7 +105,7 @@ Say these plainly when asked; do not paper over them.
 - The sign at the end reads LEVEL 2, as the wiki's exit does, but the door leads back to the same floor as the next loop. The game has no Level 2.
 - The wiki's refuge during Flickering is a corridor section. In the map it is a room with a bed, marked by a green lamp that stays lit.
 - The wiki's Flickering cannot be predicted. The map's comes every two to three minutes and each time a part is taken.
-- Arrival is by the game's Level 0 elevator stopping early, not by noclipping.
+- Arrival is by the game's Level 0 elevator, which stops at the floor, not by noclipping.
 - Controls hints ("F9 tries the door") and the tape, valve, fuse and key puzzle are the mod's own and cite rules, not the wiki.
 
 ## What a level file can switch on in the mod
@@ -125,8 +126,40 @@ Since 0.3.0 the mod keeps no hunger or stamina of its own. Asked for by the owne
 - Gone from `halls.lua`: the cost per room, the HUD numbers, the warnings, passing out and waking in the first room, F9 on food and beds, and the guess at when food was eaten. Gone from level files: `rules.hungerStart/staminaStart/moveHunger/moveStamina`, the numbers on food and beds, and the lines `wake`, `collapse`, `hungry`, `tired`, `eat`, `restQuiet`, `restLoud`. `python generator/update_level.py levels/<id>.json` takes these out of an older level without changing its wording.
 - Food and drink are the game's pickups (`GAME_ITEMS` in `halls.lua`). The mod places them and then leaves them alone. Where the game item cannot be placed, no stand-in is built.
 - Beds are furniture. On a level with `rules.refuge` a room with a bed is a refuge; nothing is done on the bed itself.
-- The mod moves a player in five places only: out of the elevator onto the floor at the start, each stretch of the long hall (that is how the hall stays long), arriving in the last room, starting the next loop, and being put back after falling out of the floor. The dead-end passage used to carry the player back into the room; now it closes like the first room's doorway does, behind the player's back (`update_fake`). Do not add a trick that moves the player.
+- The mod moves a player in four places only: each stretch of the long hall (that is how the hall stays long), arriving in the last room, starting the next loop, and being put back after falling out of the floor. Since 0.4.0 the players walk out of the elevator themselves; putting them in the first room at the start is only the last resort when the car does not come (see "The elevator"). The dead-end passage used to carry the player back into the room; now it closes like the first room's doorway does, behind the player's back (`update_fake`). Do not add a trick that moves the player.
 - What is known about the game's side comes from names in the game's executable, not from watching it: a `BETSanityComponent` on the survivor (`SanityComponent`), attributes `Sanity`, `MaxSanity`, `SanityDepletionRate`, `Stamina`, `MaxStamina`, `StaminaRegenRate`, the tags `Survivor.Attribute.Sanity.PauseDepletion`, `Survivor.Downed.Sanity`, `Survivor.Death.Sanity`, `Ontology.Item.Consumable.Sanity` and `Ontology.Item.Consumable.Stamina`, and `GetStamina()` / `GetMaxStamina()` on the pawn. So sanity very likely drains over time and items give it back. **Not checked in the game:** how fast sanity drains on this floor, whether the lights-out hunt changes it, and which item gives what. The mod reads and writes none of it. If a refuge should ever pause the drain, the `PauseDepletion` tag is where to look, and it needs a run in the game first.
+
+## The elevator
+
+Since 0.4.0 the game's own elevator brings the players to the floor. Asked for by the owner on 2026-11-17: "Fix the Elevator animation actually stopping on our floor and opening the doors, copy from the real level". Before that the mod cut the ride after three seconds, hid the car and put the players in the first room.
+
+How it works (`H.enter`, `update_arrival`, `build_car_side` in `halls.lua`; `watch_elevator` in `main.lua`):
+
+- `main.lua` asks `H.enter({})` every 200 ms from the start of Level 0. It returns false until the game has queued the ride (`CurrentElevatorMoveData.MoveDuration > 0`), about half a second in.
+- Then the mod writes one number, `MoveDistance = -2400` (`CAR.drop`), into `car.ElevatorMovement.CurrentElevatorMoveData`, and builds the floor where the car will stop: floor top 12 above the car's stop height, the first room's west wall 4 in front of the car's origin, a doorway 150 wide and 236 high centred on the car's doors.
+- From there it only watches (`G.arrival.state`: `riding`, `stopped`, `open`, `done`). The game brakes the car, calls its own `StartMatch`, and opens the doors. The first opening line is said when the car stops; the floor's clocks, the hunt timer and the rest of the opening start when the doors begin to open. Until then the tick runs only the objectives, the menu cover and the HUD.
+- The mod never moves a player, never hides the car or its panel, never switches the car's tick or collision off, and never calls the elevator's own functions.
+- Fallbacks, all ending with the players put in the first room behind shut steel landing doors (`shut_car_doorway`): no car or no queued ride after 3 s of movement or 25 s (`cut = true` from `main.lua`), a first room with a room to its west or the dead-end room as first room (`car_side_free`), a car still moving after 75 s, doors still shut 25 s after the stop (`give_up_on_car`).
+- Loop 2 and later are built without the car ride, so the landing doors are shut there; the car is still behind them.
+- Co-op: the host's message is `[CBR] BUILD x y z car`; another player's mod builds at that place and shortens its own copy of the ride. **Not run with a second player.** Whether the host's change of the distance reaches a player without the mod is not known.
+
+Measured in the game on 2026-11-17 with `scripts/record_elevator.py` and `scripts/probes/elevator_parts.lua` (real Level 0, mod hands off):
+
+| | |
+| --- | --- |
+| Actor | `BP_ElevatorFinal_C` (`/Script/BETGame.Level0Elevator`, base `Elevator_Base`) at x 284, y 0, yaw -90; z 24915 at the start, -9 at the end |
+| Ride | `ElevatorMovement.CurrentElevatorMoveData`: `MoveDistance -24924`, `MoveDuration 27`, `MoveStartHeight 24915`. Queued by `OnAllPlayersJoined` about 0.5 s in, moving about 1.5 s later. A small rise at the start, a dip of about 7 past the target, then it settles |
+| Doors | About 1.5 s after `OnElevatorMoveComplete` the game calls `StartMatch` and `MoveElevatorDoors`; `CurrentDoorAlpha` goes 0 to 1 in 4.5 s. The car then stays, doors open |
+| Player | Not attached. Stands on the car floor, 109.2 above the car's origin with a capsule half height of 95, so the car floor is 12 above the origin. No level sequence plays |
+| Car | `ElevatorMesh` spans x -138..287, y -112.5..107.5 in the world with the car at x 284; doors `SM_Lift_01_Door_01..04` in the plane x 267..272; clear doorway y -69.2..61.7 (centre -3.75, 131 wide), 230 high above the car floor |
+
+With the mod (six rides alone, journey on Level 0): the log reads "The elevator was going -24924; it now goes -2400 and stops at z 22515.0", the car settles at 22515.0, the doors start to open about 30 s after the level starts, and holding W walks the player from the car into the first room with no step (the player's height above the floor reads 97.2 in the car and in the room).
+
+Three things learned the hard way:
+
+- Calling `QueueElevatorMovement` on a car that has already arrived crashed the game a moment later. Change the ride the game queues; do not queue one.
+- `FindAllOf("StaticMeshComponent")` also returns instanced meshes. Level 0's chunk manager draws its walls with instanced meshes of up to 20000 copies, and `SetWorldScale3D` on one of those while it is solid took 4.5 s (the whole pass froze the game for 6 to 8 s at the start of the ride). With `SetCollisionEnabled(0)` first, the same call takes 1 ms and the whole pass 0.1 s. `hide_step` keeps that order and also spreads the work over the ride, 6 ms a tick. `scripts/probes/hide_cost.lua` measures it.
+- Standing still after the doors open, the player died about two minutes later in two runs and the level restarted (the restart rides worked). The first hunt is due 100 to 140 s after the doors open, so this is very likely the Skin Stealer; it was not watched.
 
 ## Unreal editor round trip
 
@@ -146,5 +179,6 @@ Steps for a person: `docs/unreal-editor.md`. For an agent:
 - Nothing extracted from the game goes into the repo: no meshes, textures, sounds. No travel or cheat commands to enter the map.
 - No machine paths in scripts. The game folder comes from `generator/settings.py` (Steam's library list, or `BET_GAME_DIR`).
 - In UE4SS Lua, never call `:GetFName()` on an object without checking `:IsValid()` first. On a null object it crashes the game and `pcall` does not catch it.
+- Do not hide, stop or move the game's elevator while it brings the players, and do not call its functions (O20 checks this).
 - Shell heredocs eat backslashes. Write scripts that contain `\n` or `\b` with a file-writing tool, not through a heredoc.
 - Ignored by git and safe to ignore: `dev/` (probes and one-off patch scripts), `shots/`, `vendor/`, `export/`, `dist/`.
